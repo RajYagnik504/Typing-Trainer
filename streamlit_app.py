@@ -45,10 +45,10 @@ if not os.path.exists(os.path.join(static_dir, "index.html")):
     st.error("⚙️ Application build not found. Please compile the frontend before launching.")
     st.info("Run `npm run build` in the terminal to compile assets to the `dist/` directory.")
 else:
-    # Direct iframe rendering using Streamlit's official components.iframe
-    # Probes if running in Streamlit Cloud vs local deployment
-    is_cloud = "STREAMLIT_SHARING_MODE" in os.environ or "/app/" in os.path.abspath(__file__)
-    src_url = "/app/static/index.html" if is_cloud else "/app/static/index.html"
-
-    components.iframe(src=src_url, height=950, scrolling=True)
+    # Read and render the self-contained HTML directly using components.html
+    # This completely avoids relative path and server MIME type issues on Streamlit Cloud
+    with open(os.path.join(static_dir, "index.html"), "r", encoding="utf-8") as f:
+        html_content = f.read()
+    
+    components.html(html_content, height=950, scrolling=True)
 st.markdown("<!-- end of layout -->", unsafe_allow_html=True)

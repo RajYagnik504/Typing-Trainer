@@ -2,13 +2,12 @@ import React, { useState, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import { useAppContext } from './context/AppContext';
 
-// Lazy load pages for performance optimization
-const Home = React.lazy(() => import('./pages/Home'));
-const SkillTest = React.lazy(() => import('./pages/SkillTest'));
-const Games = React.lazy(() => import('./pages/Games'));
-const Leaderboard = React.lazy(() => import('./pages/Leaderboard'));
-const Profile = React.lazy(() => import('./pages/Profile'));
-const BlindTypingAcademy = React.lazy(() => import('./pages/BlindTypingAcademy'));
+import Home from './pages/Home';
+import SkillTest from './pages/SkillTest';
+import Games from './pages/Games';
+import Leaderboard from './pages/Leaderboard';
+import Profile from './pages/Profile';
+import BlindTypingAcademy from './pages/BlindTypingAcademy';
 
 const Loader = () => (
   <div style={styles.loaderWrap}>

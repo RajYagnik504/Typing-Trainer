@@ -18,7 +18,7 @@ export const predictSkill = async (metrics) => {
   try {
     const controller = new AbortController();
     const tid        = setTimeout(() => controller.abort(), 3000);
-    const response   = await fetch('http://localhost:5000/predict', {
+    const response   = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/predict`, {
       method : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body   : JSON.stringify(payload),
@@ -29,7 +29,12 @@ export const predictSkill = async (metrics) => {
     throw new Error('API response not ok');
   } catch {
     console.warn('Real API unavailable — using mock prediction.');
-    return mockPrediction(payload);
+    const mock = await mockPrediction(payload);
+    return {
+      ...mock,
+      offline: true,
+      recommendation: "⚠️ AI analysis server temporarily unavailable. Running local performance estimation mode. " + mock.recommendation
+    };
   }
 };
 

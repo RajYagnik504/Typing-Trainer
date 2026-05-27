@@ -18,6 +18,15 @@ const mockLeaderboard = [
 const Leaderboard = () => {
   const { profile } = useAppContext();
   const [filter, setFilter] = useState('All Time');
+  const [loading, setLoading] = useState(false);
+
+  const handleFilterChange = (f) => {
+    setLoading(true);
+    setFilter(f);
+    setTimeout(() => {
+      setLoading(false);
+    }, 700);
+  };
 
   const getRankIcon = (rank) => {
     if (rank === 1) return <Trophy size={20} color="#FFD700" />;
@@ -49,7 +58,7 @@ const Leaderboard = () => {
                 backgroundColor: filter === f ? 'var(--glass-border-highlight)' : 'transparent',
                 color: filter === f ? 'white' : 'var(--text-secondary)'
               }}
-              onClick={() => setFilter(f)}
+              onClick={() => handleFilterChange(f)}
             >
               {f}
             </button>
@@ -58,51 +67,63 @@ const Leaderboard = () => {
       </div>
 
       <div className="glass-panel" style={styles.tableContainer}>
-        <table style={styles.table}>
-          <thead>
-            <tr style={styles.tableHeader}>
-              <th style={styles.th}>Rank</th>
-              <th style={styles.th}>User</th>
-              <th style={styles.th}>WPM</th>
-              <th style={styles.th}>Accuracy</th>
-              <th style={styles.th}>Skill Tier</th>
-              <th style={styles.th}>Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Inject user's row if they have a score (simulated at rank 11 for demo if score > 0) */}
-            {profile.score > 0 && (
-              <tr style={{...styles.tr, ...styles.userRow}}>
-                <td style={styles.td}>11</td>
-                <td style={{...styles.td, fontWeight: 'bold', color: 'var(--accent-teal)'}}>
-                  🏳️ {profile.username} (You)
-                </td>
-                <td style={styles.td}>--</td>
-                <td style={styles.td}>--</td>
-                <td style={{...styles.td, color: getSkillColor(profile.skillLevel)}}>{profile.skillLevel}</td>
-                <td style={styles.td}>{profile.score}</td>
+        {loading ? (
+          <div style={styles.loadingWrapper}>
+            <div style={styles.spinner}></div>
+            <span>QUERYING GLOBAL INTELLIGENCE DATABASE...</span>
+            <style>{`
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `}</style>
+          </div>
+        ) : (
+          <table style={styles.table}>
+            <thead>
+              <tr style={styles.tableHeader}>
+                <th style={styles.th}>Rank</th>
+                <th style={styles.th}>User</th>
+                <th style={styles.th}>WPM</th>
+                <th style={styles.th}>Accuracy</th>
+                <th style={styles.th}>Skill Tier</th>
+                <th style={styles.th}>Score</th>
               </tr>
-            )}
+            </thead>
+            <tbody>
+              {profile.score > 0 && (
+                <tr style={{...styles.tr, ...styles.userRow}}>
+                  <td style={styles.td}>11</td>
+                  <td style={{...styles.td, fontWeight: 'bold', color: 'var(--accent-teal)'}}>
+                    🏳️ {profile.username} (You)
+                  </td>
+                  <td style={styles.td}>--</td>
+                  <td style={styles.td}>--</td>
+                  <td style={{...styles.td, color: getSkillColor(profile.skillLevel)}}>{profile.skillLevel}</td>
+                  <td style={styles.td}>{profile.score}</td>
+                </tr>
+              )}
 
-            {mockLeaderboard.map((row) => (
-              <tr key={row.rank} style={styles.tr}>
-                <td style={styles.td}>
-                  <div style={styles.rankCell}>{getRankIcon(row.rank)}</div>
-                </td>
-                <td style={{...styles.td, fontWeight: 500}}>
-                  <span style={{marginRight: '0.5rem'}}>{row.country}</span>
-                  {row.username}
-                </td>
-                <td style={{...styles.td, fontWeight: 'bold'}}>{row.wpm}</td>
-                <td style={styles.td}>{row.accuracy}%</td>
-                <td style={{...styles.td, color: getSkillColor(row.skillLevel), fontWeight: 600}}>
-                  {row.skillLevel}
-                </td>
-                <td style={styles.td}>{row.score}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              {mockLeaderboard.map((row) => (
+                <tr key={row.rank} style={styles.tr}>
+                  <td style={styles.td}>
+                    <div style={styles.rankCell}>{getRankIcon(row.rank)}</div>
+                  </td>
+                  <td style={{...styles.td, fontWeight: 500}}>
+                    <span style={{marginRight: '0.5rem'}}>{row.country}</span>
+                    {row.username}
+                  </td>
+                  <td style={{...styles.td, fontWeight: 'bold'}}>{row.wpm}</td>
+                  <td style={styles.td}>{row.accuracy}%</td>
+                  <td style={{...styles.td, color: getSkillColor(row.skillLevel), fontWeight: 600}}>
+                    {row.skillLevel}
+                  </td>
+                  <td style={styles.td}>{row.score}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
@@ -174,6 +195,26 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     width: '30px',
+  },
+  loadingWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: '300px',
+    gap: '1rem',
+    color: 'var(--text-secondary)',
+    fontSize: '0.85rem',
+    fontWeight: 600,
+    letterSpacing: '1px'
+  },
+  spinner: {
+    width: '36px',
+    height: '36px',
+    border: '3px solid rgba(127, 119, 221, 0.1)',
+    borderTop: '3px solid var(--accent-purple)',
+    borderRadius: '50%',
+    animation: 'spin 1s linear infinite'
   }
 };
 

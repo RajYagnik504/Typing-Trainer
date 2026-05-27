@@ -271,16 +271,21 @@ const BubblePop = ({ onComplete }) => {
 
   // Resize canvas handler
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas && canvas.parentElement) {
-      const rect = canvas.parentElement.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = 500;
-      if (gameState !== 'playing') {
-         const ctx = canvas.getContext('2d');
-         if (ctx) ctx.clearRect(0,0, canvas.width, canvas.height);
+    const handleResize = () => {
+      const canvas = canvasRef.current;
+      if (canvas && canvas.parentElement) {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = 500;
+        if (gameState !== 'playing') {
+          const ctx = canvas.getContext('2d');
+          if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
       }
-    }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [gameState]);
 
   const startGame = () => {

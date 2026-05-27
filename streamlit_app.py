@@ -179,6 +179,11 @@ parent_dir = os.path.dirname(os.path.abspath(__file__))
 component_dir = os.path.join(parent_dir, "assets", "typing_component")
 typing_component = st.components.v1.declare_component("typing_component", path=component_dir)
 
+# Declare bidirectional games component
+games_component_dir = os.path.join(parent_dir, "assets", "games_component")
+games_component = st.components.v1.declare_component("games_component", path=games_component_dir)
+
+
 # Initialize Session State variables
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
@@ -787,6 +792,46 @@ def render_student_leaderboard():
         
         st.table(df[["Name", "Total XP", "Level"]])
 
+# ----------------- TYPING GAMES VIEW -----------------
+def render_typing_games():
+    st.markdown("<h1 class='title-neon'>Arcade Games</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#94A3B8;'>Practice typing speed, cognitive reaction time, and key rhythm with classic mini-games.</p>", unsafe_allow_html=True)
+    
+    student = database.get_student(st.session_state.student_id)
+    
+    # Render Custom Bidirectional Games Component
+    result = games_component(student_id=student["id"], key="arcade_games_component")
+    
+    if result is not None:
+        # User finished a game and reported stats
+        game_name = result.get("game", "")
+        score = result.get("score", 0)
+        accuracy = result.get("accuracy", 0)
+        xp_earned = result.get("xp_earned", 0)
+        
+        # Save game completion or stats (using a session tracking key to prevent double submissions)
+        session_key = f"game_{game_name}_{score}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        if session_key not in st.session_state:
+            st.session_state[session_key] = True
+            
+            # Award XP to Student
+            new_xp = student["xp"] + xp_earned
+            new_level = 1 + (new_xp // 300)
+            database.update_student_progress(student["id"], new_xp, new_level)
+            
+            # Add game completed badge if high score / master status
+            badges_earned = []
+            badge_name = f"{game_name.capitalize()} Master"
+            if xp_earned >= 40 and database.add_achievement(student["id"], badge_name):
+                badges_earned.append(badge_name)
+                
+            st.balloons()
+            st.success(f"🎉 Game Complete! Earned **+{xp_earned} XP** playing **{game_name.upper()}**!")
+            for badge in badges_earned:
+                st.info(f"🏆 Achievement Unlocked: **{badge}**!")
+                
+            st.rerun()
+
 # ----------------- TEACHER CLASSROOM MANAGEMENT VIEW -----------------
 def render_teacher_dashboard():
     st.markdown("<h1 class='title-neon'>TEACHER PORTAL cockpit</h1>", unsafe_allow_html=True)
@@ -929,7 +974,7 @@ def main():
         st.sidebar.markdown(f"<div style='text-align:center;'><h2 style='font-size:1.3rem;'>⚡ TYPECRAFT</h2><span style='color:#94A3B8; font-size:0.8rem;'>{st.session_state.student_name}</span></div><hr>", unsafe_allow_html=True)
         
         if st.session_state.user_role == "student":
-            tabs = ["Visual Curriculum", "Daily Drill", "Report Card", "Leaderboard"]
+            tabs = ["Visual Curriculum", "Daily Drill", "Typing Games", "Report Card", "Leaderboard"]
         else:
             tabs = ["Classrooms Admin", "Teacher Analytics"]
             
@@ -961,6 +1006,8 @@ def main():
             render_progress_report_card()
         elif st.session_state.active_tab == "Leaderboard":
             render_student_leaderboard()
+        elif st.session_state.active_tab == "Typing Games":
+            render_typing_games()
         elif st.session_state.active_tab == "Classrooms Admin":
             render_teacher_dashboard()
         elif st.session_state.active_tab == "Teacher Analytics":

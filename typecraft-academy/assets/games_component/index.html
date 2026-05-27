@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Typecraft Arcade Cabinet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #050810;
+      --card-bg: rgba(13, 20, 38, 0.45);
+      --purple: #7F77DD;
+      --purple-glow: rgba(127, 119, 221, 0.4);
+      --teal: #1D9E75;
+      --teal-glow: rgba(29, 158, 117, 0.3);
+      --amber: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.3);
+      --red: #ef4444;
+      --red-glow: rgba(239, 68, 68, 0.3);
+      --text-main: #E2E8F0;
+      --text-secondary: #94A3B8;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      background-color: transparent;
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+      padding: 10px;
+    }
+    
+    .arcade-container {
+      background: var(--card-bg);
+      border: 1px solid rgba(127, 119, 221, 0.15);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .tab-bar {
+      display: flex;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 6px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      margin-bottom: 20px;
+      gap: 5px;
+    }
+
+    .tab {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab.active {
+      color: #fff;
+      background: rgba(127, 119, 221, 0.2);
+      box-shadow: inset 0 0 10px rgba(127, 119, 221, 0.2);
+      outline: 1px solid rgba(127, 119, 221, 0.4);
+    }
+
+    .stats-bar {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 15px;
+      padding: 10px 15px;
+      background: rgba(5, 8, 16, 0.4);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .stat-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      letter-spacing: 0.1em;
+      margin-bottom: 2px;
+      font-weight: 600;
+    }
+
+    .stat-val {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--teal);
+      text-shadow: 0 0 8px var(--teal-glow);
+    }
+
+    .stat-val.purple {
+      color: var(--purple);
+      text-shadow: 0 0 8px var(--purple-glow);
+    }
+
+    .stat-val.red {
+      color: var(--red);
+      text-shadow: 0 0 8px var(--red-glow);
+    }
+
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      height: 450px;
+      background: #05050a;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(5, 5, 10, 0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      text-align: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .overlay h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px var(--purple-glow);
+    }
+
+    .overlay p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      max-width: 400px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .btn-arcade {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      padding: 10px 24px;
+      background: var(--purple);
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 0 15px var(--purple-glow);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-arcade:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px var(--purple-glow);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: none;
+      margin-top: 10px;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: none;
+    }
+
+    /* A-Z Speed Grid CSS */
+    .az-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      max-width: 600px;
+      margin-bottom: 20px;
+      z-index: 15;
+    }
+
+    .az-letter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      color: var(--text-secondary);
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .az-letter.passed {
+      color: var(--teal);
+      border-color: rgba(29, 158, 117, 0.3);
+      background: rgba(29, 158, 117, 0.1);
+      text-shadow: 0 0 5px var(--teal-glow);
+    }
+
+    .az-letter.current {
+      color: #fff;
+      border-color: var(--purple);
+      background: rgba(127, 119, 221, 0.2);
+      box-shadow: 0 0 10px var(--purple-glow);
+      transform: scale(1.15);
+      font-weight: 700;
+    }
+
+    /* Rhythm Strike lane guide lines and hit flash */
+    .rhythm-guide {
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      z-index: 5;
+    }
+
+    .rhythm-rating {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 2.2rem;
+      pointer-events: none;
+      z-index: 8;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    /* Input hook */
+    .hidden-input {
+      position: absolute;
+      opacity: 0;
+      z-index: -1;
+      width: 0;
+      height: 0;
+    }
+
+    .timing-legend {
+      display: flex;
+      gap: 15px;
+      font-size: 0.75rem;
+      margin-top: 15px;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="arcade-container">
+    <!-- Hidden input to capture keyboard inputs reliably -->
+    <input type="text" id="hiddenInput" class="hidden-input" autocomplete="off" autofocus>
+
+    <!-- Header Navigation -->
+    <div class="tab-bar">
+      <button class="tab active" onclick="switchGame('bubble')">🫧 Bubble Pop</button>
+      <button class="tab" onclick="switchGame('az')">⚡ A–Z Speed</button>
+      <button class="tab" onclick="switchGame('rush')">🚀 Word Rush</button>
+      <button class="tab" onclick="switchGame('rhythm')">🥁 Rhythm Strike</button>
+    </div>
+
+    <!-- Stats HUD -->
+    <div class="stats-bar" id="statsBar">
+      <div class="stat-box">
+        <div class="stat-label">Score</div>
+        <div id="scoreVal" class="stat-val">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Combo</div>
+        <div id="comboVal" class="stat-val purple">x0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Lives</div>
+        <div id="livesVal" class="stat-val red">❤️❤️❤️</div>
+      </div>
+      <div class="stat-box" id="timeBox" style="display:none;">
+        <div class="stat-label">Time</div>
+        <div id="timeVal" class="stat-val purple">0.00s</div>
+      </div>
+    </div>
+
+    <!-- Canvas Gameplay Area -->
+    <div class="canvas-container" id="canvasBox">
+      <canvas id="gameCanvas"></canvas>
+      
+      <!-- Overlay Screen -->
+      <div class="overlay" id="gameOverlay">
+        <h2 id="overlayTitle">Bubble Pop</h2>
+        <p id="overlayDesc">Letters fall from space. Type each letter before it hits the bottom. Keep your streak alive to multiplier your score!</p>
+        <div id="extraContent"></div>
+        <button class="btn-arcade" id="startBtn" onclick="triggerStart()">🎮 Insert Coin</button>
+      </div>
+
+      <div class="rhythm-rating" id="ratingText">PERFECT</div>
+    </div>
+  </div>
+
+  <script>
+    // ----------------- STREAMLIT BRIDGE -----------------
+    function sendMessage(type, payload) {
+      window.parent.postMessage({
+        isStreamlitMessage: true,
+        type: type,
+        ...payload
+      }, "*");
+    }
+
+    function updateHeight() {
+      sendMessage("streamlit:setFrameHeight", {
+        height: document.body.scrollHeight + 30
+      });
+    }
+
+    sendMessage("streamlit:componentReady", { apiVersion: 1 });
+    window.onload = updateHeight;
+
+    // ----------------- AUDIO SYNTH ENGINE -----------------
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(type) {
+      try {
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        
+        if (type === 'pop') {
+          // Bubble pop sound
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
+          gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.1);
+        } else if (type === 'miss' || type === 'error') {
+          // Mistake buzzer sound
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(160, audioCtx.currentTime);
+          osc.frequency.setValueAtTime(130, audioCtx.currentTime + 0.05);
+          gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.25);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.25);
+        } else if (type === 'success') {
+          // Level success chime
+          const now = audioCtx.currentTime;
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+          osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+          osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(now + 0.5);
+        } else if (type === 'beat') {
+          // Rhythm Strike hit sound
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.08);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.08);
+        } else if (type === 'click') {
+          // Standard keypress sound
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.05);
+        }
+      } catch(e) {}
+    }
+
+    // ----------------- GAME GENERAL STATE -----------------
+    let currentGame = 'bubble'; // bubble, az, rush, rhythm
+    let gameState = 'idle'; // idle, playing, gameover
+    let score = 0;
+    let combo = 0;
+    let maxCombo = 0;
+    let lives = 3;
+    let startTime = null;
+    let loopId = null;
+
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const hiddenInput = document.getElementById("hiddenInput");
+    const clickBox = document.getElementById("canvasBox");
+    
+    // Set canvas dimensions
+    function resizeCanvas() {
+      canvas.width = clickBox.clientWidth;
+      canvas.height = 450;
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    // Keep typing focus inside input
+    clickBox.addEventListener("click", () => {
+      if (gameState === 'playing') {
+        hiddenInput.focus();
+      }
+    });
+
+    // ----------------- GAME VARIABLES -----------------
+    // Bubble Pop
+    let bubbles = [];
+    let particles = [];
+    let lastSpawn = 0;
+    let spawnInterval = 1200; // ms
+    let bubbleSpeed = 1.6;
+
+    // A-Z Speed
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    let azIndex = 0;
+    let elapsed = 0;
+
+    // Word Rush
+    let rushWords = [];
+    let wordList = ["cyber", "quantum", "neon", "galaxy", "reactor", "arcade", "matrix", "vector", "binary", "system", "typing", "memory", "speed", "combo", "perfect", "intelligence", "cognitive", "shield", "pulse", "beacon"];
+    let lastWordSpawn = 0;
+    let wordSpawnInterval = 2500;
+    let wordSpeed = 1.4;
+
+    // Rhythm Strike
+    let notes = [];
+    let lastNoteSpawn = 0;
+    const rhythmKeys = ['d', 'f', 'j', 'k'];
+    const laneColors = ['#ef4444', '#f59e0b', '#1D9E75', '#7F77DD'];
+    const laneX = [];
+    let bpm = 110;
+    let rhythmScore = 0;
+    let hitNotesCount = 0;
+    let missedNotesCount = 0;
+
+    // Initialize lane coordinates for Rhythm game
+    function initRhythmCoordinates() {
+      laneX.length = 0;
+      const width = canvas.width;
+      const laneWidth = width / 4;
+      for (let i = 0; i < 4; i++) {
+        laneX.push(laneWidth * i + laneWidth / 2);
+      }
+    }
+
+    // ----------------- SUB-GAME ENGINES -----------------
+    
+    // 1. Bubble Pop Update & Draw
+    function updateBubblePop(time) {
+      // Spawn new bubbles
+      if (time - lastSpawn > spawnInterval) {
+        const char = alphabet[Math.floor(Math.random() * alphabet.length)];
+        bubbles.push({
+          x: Math.random() * (canvas.width - 60) + 30,
+          y: -20,
+          char: char,
+          speed: bubbleSpeed + Math.random() * 0.8 + (score * 0.001),
+          radius: 20
+        });
+        lastSpawn = time;
+        // Accelerate spawn intervals
+        spawnInterval = Math.max(600, 1200 - (score * 2));
+      }
+
+      // Update bubbles position
+      for (let i = bubbles.length - 1; i >= 0; i--) {
+        const b = bubbles[i];
+        b.y += b.speed;
+        
+        // Hitting bottom penalty
+        if (b.y > canvas.height + 20) {
+          bubbles.splice(i, 1);
+          lives--;
+          combo = 0;
+          playSound('miss');
+          updateHUD();
+          if (lives <= 0) {
+            triggerGameOver();
+          }
+        }
+      }
+
+      // Update particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.02;
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+    }
+
+    function drawBubblePop() {
+      // Draw bubbles
+      bubbles.forEach(b => {
+        // Glowing bubble aura
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius + 6, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(127, 119, 221, 0.15)';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = '#7F77DD';
+        ctx.lineWidth = 2.5;
+        ctx.fillStyle = 'rgba(13, 20, 38, 0.85)';
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = "bold 15px 'Orbitron', sans-serif";
+        ctx.fillStyle = "#FFFFFF";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(b.char.toUpperCase(), b.x, b.y);
+      });
+
+      // Draw particles
+      particles.forEach(p => {
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    function popBubble(char) {
+      let lowestBubbleIdx = -1;
+      let lowestY = -100;
+      
+      // Find the lowest matching bubble on screen
+      for (let i = 0; i < bubbles.length; i++) {
+        if (bubbles[i].char === char && bubbles[i].y > lowestY) {
+          lowestY = bubbles[i].y;
+          lowestBubbleIdx = i;
+        }
+      }
+
+      if (lowestBubbleIdx !== -1) {
+        const b = bubbles[lowestBubbleIdx];
+        
+        // Spawn particles
+        for (let j = 0; j < 12; j++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 3 + 2;
+          particles.push({
+            x: b.x,
+            y: b.y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            color: '#1D9E75',
+            alpha: 1,
+            size: Math.random() * 4 + 2
+          });
+        }
+
+        bubbles.splice(lowestBubbleIdx, 1);
+        playSound('pop');
+        combo++;
+        if (combo > maxCombo) maxCombo = combo;
+        
+        const multiplier = Math.min(4, 1 + Math.floor(combo / 10) * 0.5);
+        score += Math.floor(10 * multiplier);
+        updateHUD();
+      } else {
+        // Penalty for wrong key
+        combo = 0;
+        playSound('error');
+        updateHUD();
+      }
+    }
+
+    // 2. A-Z Speed Engine
+    function updateAZSpeed(time) {
+      if (gameState === 'playing' && startTime) {
+        elapsed = (time - startTime) / 1000.0;
+        document.getElementById("timeVal").innerText = elapsed.toFixed(2) + "s";
+      }
+    }
+
+    function drawAZSpeed() {
+      // Drawing handled entirely via overlay grid inside DOM for maximum visual quality
+    }
+
+    function checkAZKey(key) {
+      if (azIndex === 0 && key === 'a') {
+        startTime = performance.now();
+        azIndex = 1;
+        playSound('click');
+        renderAZGrid();
+        return;
+      }
+      
+      if (azIndex > 0 && azIndex < 26) {
+        const target = alphabet[azIndex];
+        if (key === target) {
+          azIndex++;
+          playSound('click');
+          renderAZGrid();
+          
+          if (azIndex === 26) {
+            // alphabet complete!
+            elapsed = (performance.now() - startTime) / 1000.0;
+            playSound('success');
+            triggerGameOver();
+          }
+        } else {
+          playSound('error');
+          shakeCanvas();
+        }
+      }
+    }
+
+    function renderAZGrid() {
+      let gridHTML = `<div class="az-grid">`;
+      alphabet.forEach((l, i) => {
+        let cls = "az-letter";
+        if (i < azIndex) cls += " passed";
+        else if (i === azIndex && gameState === 'playing') cls += " current";
+        gridHTML += `<div class="${cls}">${l.toUpperCase()}</div>`;
+      });
+      gridHTML += `</div>`;
+      document.getElementById("extraContent").innerHTML = gridHTML;
+    }
+
+    // 3. Word Rush Engine
+    function updateWordRush(time) {
+      // Spawn new words
+      if (time - lastWordSpawn > wordSpawnInterval) {
+        const text = wordList[Math.floor(Math.random() * wordList.length)];
+        const lane = Math.floor(Math.random() * 3); // 3 lanes
+        rushWords.push({
+          text: text,
+          typed: "",
+          x: canvas.width + 50,
+          lane: lane,
+          speed: wordSpeed + (score * 0.0005) + Math.random() * 0.4
+        });
+        lastWordSpawn = time;
+        wordSpawnInterval = Math.max(1200, 2500 - (score * 3));
+      }
+
+      // Update words position
+      for (let i = rushWords.length - 1; i >= 0; i--) {
+        const w = rushWords[i];
+        w.x -= w.speed;
+        
+        // Overflow left border
+        if (w.x < -150) {
+          rushWords.splice(i, 1);
+          lives--;
+          combo = 0;
+          playSound('miss');
+          updateHUD();
+          if (lives <= 0) {
+            triggerGameOver();
+          }
+        }
+      }
+    }
+
+    function drawWordRush() {
+      // Lane lines
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+      ctx.lineWidth = 2;
+      for (let i = 1; i <= 2; i++) {
+        const y = 80 + i * 110;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+
+      // Draw active words
+      rushWords.forEach(w => {
+        const laneY = 140 + w.lane * 110;
+        
+        // Progress color alert (green -> orange -> red)
+        const progressX = w.x / canvas.width;
+        let color = '#1D9E75'; // Safe green
+        if (progressX < 0.3) {
+          color = '#ef4444'; // Red danger
+        } else if (progressX < 0.6) {
+          color = '#f59e0b'; // Amber warning
+        }
+
+        // Draw card backing
+        ctx.fillStyle = "rgba(13, 20, 38, 0.75)";
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        
+        const textWidth = ctx.measureText(w.text).width;
+        const boxWidth = Math.max(100, textWidth + 30);
+        
+        ctx.beginPath();
+        ctx.roundRect(w.x - 15, laneY - 25, boxWidth, 42, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        // Draw typed vs untyped characters
+        ctx.font = "bold 17px 'JetBrains Mono', monospace";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "middle";
+        
+        // Typed characters highlighted
+        ctx.fillStyle = '#7F77DD';
+        ctx.fillText(w.typed, w.x, laneY - 4);
+        
+        // Rest of the word
+        ctx.fillStyle = '#FFFFFF';
+        const typedWidth = ctx.measureText(w.typed).width;
+        ctx.fillText(w.text.substring(w.typed.length), w.x + typedWidth, laneY - 4);
+      });
+    }
+
+    function checkWordRushKey(key) {
+      let isCorrect = false;
+      
+      // Find words starting with current typed letter prefix
+      for (let i = 0; i < rushWords.length; i++) {
+        const w = rushWords[i];
+        const nextChar = w.text[w.typed.length];
+        
+        if (nextChar === key) {
+          w.typed += key;
+          isCorrect = true;
+          playSound('click');
+          
+          // Complete full word
+          if (w.typed === w.text) {
+            playSound('pop');
+            rushWords.splice(i, 1);
+            combo++;
+            if (combo > maxCombo) maxCombo = combo;
+            score += Math.floor(25 * (1 + combo * 0.05));
+            updateHUD();
+          }
+          break;
+        }
+      }
+
+      if (!isCorrect) {
+        // Reset typed inputs for all active words
+        rushWords.forEach(w => w.typed = "");
+        combo = 0;
+        playSound('error');
+        updateHUD();
+      }
+    }
+
+    // 4. Rhythm Strike Engine
+    function updateRhythmStrike(time) {
+      // Spawn notes procedurally based on BPM
+      const noteDelay = 60000 / bpm; // beat duration
+      if (time - lastNoteSpawn > noteDelay) {
+        const lane = Math.floor(Math.random() * 4);
+        notes.push({
+          lane: lane,
+          y: -20,
+          speed: 4.5,
+          radius: 18
+        });
+        lastNoteSpawn = time;
+      }
+
+      // Update notes Y
+      for (let i = notes.length - 1; i >= 0; i--) {
+        const n = notes[i];
+        n.y += n.speed;
+        
+        // If note passes hit zone without hit
+        if (n.y > 400 && !n.missed) {
+          n.missed = true;
+          combo = 0;
+          missedNotesCount++;
+          updateHUD();
+          showRating("MISS", '#ef4444');
+          playSound('miss');
+        }
+
+        // Remove note
+        if (n.y > canvas.height + 20) {
+          notes.splice(i, 1);
+        }
+      }
+    }
+
+    function drawRhythmStrike() {
+      initRhythmCoordinates();
+
+      // Draw columns/lanes
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.01)';
+      const colWidth = canvas.width / 4;
+      for (let i = 0; i < 4; i++) {
+        ctx.fillRect(i * colWidth, 0, colWidth, canvas.height);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo((i + 1) * colWidth, 0);
+        ctx.lineTo((i + 1) * colWidth, canvas.height);
+        ctx.stroke();
+      }
+
+      // Draw Hit Zone line
+      ctx.strokeStyle = "rgba(127, 119, 221, 0.4)";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(0, 360);
+      ctx.lineTo(canvas.width, 360);
+      ctx.stroke();
+
+      // Lane Guide Key Markers
+      ctx.font = "bold 13px 'Orbitron', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      for (let i = 0; i < 4; i++) {
+        ctx.fillStyle = laneColors[i];
+        ctx.fillText(rhythmKeys[i].toUpperCase(), laneX[i], 395);
+      }
+
+      // Draw active notes
+      notes.forEach(n => {
+        if (n.missed) return;
+        
+        ctx.beginPath();
+        ctx.arc(laneX[n.lane], n.y, n.radius, 0, Math.PI * 2);
+        ctx.fillStyle = laneColors[n.lane];
+        ctx.shadowColor = laneColors[n.lane];
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0; // Reset glow
+        
+        ctx.beginPath();
+        ctx.arc(laneX[n.lane], n.y, n.radius - 4, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(13, 20, 38, 0.9)';
+        ctx.fill();
+      });
+    }
+
+    function checkRhythmKey(key) {
+      const laneIdx = rhythmKeys.indexOf(key);
+      if (laneIdx === -1) return;
+
+      // Find closest note in this lane
+      let closestNote = null;
+      let minDiff = 1000;
+      let closestIdx = -1;
+
+      for (let i = 0; i < notes.length; i++) {
+        const n = notes[i];
+        if (n.lane === laneIdx && !n.missed) {
+          const diff = Math.abs(n.y - 360);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestNote = n;
+            closestIdx = i;
+          }
+        }
+      }
+
+      if (closestNote && minDiff < 75) {
+        // Hit detected!
+        notes.splice(closestIdx, 1);
+        playSound('beat');
+        hitNotesCount++;
+        
+        let rating = "GOOD";
+        let scoreAdd = 10;
+        let color = '#94A3B8';
+
+        if (minDiff < 20) {
+          rating = "PERFECT";
+          scoreAdd = 30;
+          color = '#1D9E75';
+        } else if (minDiff < 45) {
+          rating = "GREAT";
+          scoreAdd = 20;
+          color = '#7F77DD';
+        }
+
+        combo++;
+        if (combo > maxCombo) maxCombo = combo;
+        score += Math.floor(scoreAdd * (1 + combo * 0.02));
+        showRating(rating, color);
+        updateHUD();
+      } else {
+        // Bad hit trigger missed penalty
+        combo = 0;
+        showRating("MISS", '#ef4444');
+        playSound('error');
+        updateHUD();
+      }
+    }
+
+    function showRating(rating, color) {
+      const textEl = document.getElementById("ratingText");
+      textEl.innerText = rating;
+      textEl.style.color = color;
+      textEl.style.textShadow = `0 0 10px ${color}`;
+      textEl.style.opacity = 1;
+      setTimeout(() => textEl.style.opacity = 0, 180);
+    }
+
+    // ----------------- MAIN LOOPS & UI -----------------
+    function gameLoop(time) {
+      if (gameState !== 'playing') return;
+
+      // Clear canvas
+      ctx.fillStyle = '#05050c';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Update & Draw specific game engine
+      if (currentGame === 'bubble') {
+        updateBubblePop(time);
+        drawBubblePop();
+      } else if (currentGame === 'az') {
+        updateAZSpeed(time);
+        drawAZSpeed();
+      } else if (currentGame === 'rush') {
+        updateWordRush(time);
+        drawWordRush();
+      } else if (currentGame === 'rhythm') {
+        updateRhythmStrike(time);
+        drawRhythmStrike();
+      }
+
+      loopId = requestAnimationFrame(gameLoop);
+    }
+
+    // Capture inputs
+    window.addEventListener("keydown", (e) => {
+      if (gameState !== 'playing') return;
+      
+      // Ignore meta commands
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      
+      const key = e.key.toLowerCase();
+      if (key.length !== 1) return;
+
+      if (currentGame === 'bubble') {
+        popBubble(key);
+      } else if (currentGame === 'az') {
+        checkAZKey(key);
+      } else if (currentGame === 'rush') {
+        checkWordRushKey(key);
+      } else if (currentGame === 'rhythm') {
+        checkRhythmKey(key);
+      }
+    });
+
+    // Start execution
+    function triggerStart() {
+      document.getElementById("gameOverlay").style.display = "none";
+      gameState = 'playing';
+      score = 0;
+      combo = 0;
+      lives = 3;
+      elapsed = 0;
+      azIndex = 0;
+      lastSpawn = performance.now();
+      lastWordSpawn = performance.now();
+      lastNoteSpawn = performance.now();
+      
+      // Empty game arrays
+      bubbles = [];
+      particles = [];
+      rushWords = [];
+      notes = [];
+      hitNotesCount = 0;
+      missedNotesCount = 0;
+      
+      updateHUD();
+      hiddenInput.focus();
+      
+      // Stop legacy loop if any
+      if (loopId) cancelAnimationFrame(loopId);
+      loopId = requestAnimationFrame(gameLoop);
+
+      if (currentGame === 'az') {
+        renderAZGrid();
+      }
+    }
+
+    function triggerGameOver() {
+      gameState = 'gameover';
+      if (loopId) cancelAnimationFrame(loopId);
+      
+      document.getElementById("gameOverlay").style.display = "flex";
+      document.getElementById("overlayTitle").innerText = currentGame === 'az' ? "🏆 Song Complete!" : "💥 Game Over";
+      
+      let xpEarned = 0;
+      let finalAccuracy = 100;
+      let statsText = "";
+
+      if (currentGame === 'az') {
+        xpEarned = Math.max(10, Math.floor(100 - (elapsed * 3))); // Sub-30s gets nice XP
+        statsText = `Finished in <b>${elapsed.toFixed(2)}s</b>.`;
+      } else if (currentGame === 'rhythm') {
+        const total = hitNotesCount + missedNotesCount;
+        finalAccuracy = total > 0 ? Math.round((hitNotesCount / total) * 100) : 100;
+        xpEarned = Math.floor(score / 15);
+        statsText = `Score: <b>${score}</b> | Acc: <b>${finalAccuracy}%</b>.`;
+      } else {
+        xpEarned = Math.floor(score / 12);
+        statsText = `Score: <b>${score}</b> | Max Combo: <b>${maxCombo}</b>.`;
+      }
+      
+      // Make sure XP is non-negative
+      xpEarned = Math.max(0, xpEarned);
+
+      document.getElementById("overlayDesc").innerHTML = `
+        ${statsText}<br>
+        Earned <b>+${xpEarned} XP</b> for your Profile progress!
+      `;
+      document.getElementById("startBtn").innerText = "🔄 Play Again";
+      document.getElementById("extraContent").innerHTML = "";
+
+      // Send metrics back to Streamlit
+      sendMessage("streamlit:setComponentValue", {
+        value: {
+          game: currentGame,
+          score: score,
+          accuracy: finalAccuracy,
+          xp_earned: xpEarned
+        }
+      });
+    }
+
+    function updateHUD() {
+      document.getElementById("scoreVal").innerText = score;
+      document.getElementById("comboVal").innerText = "x" + combo;
+      document.getElementById("livesVal").innerText = lives > 0 ? "❤️".repeat(lives) : "💀";
+    }
+
+    function switchGame(gameType) {
+      if (gameType === currentGame) return;
+      
+      currentGame = gameType;
+      
+      // Set active tab CSS
+      const tabs = document.querySelectorAll(".tab");
+      tabs.forEach(t => t.classList.remove("active"));
+      
+      let title = "";
+      let desc = "";
+      
+      if (gameType === 'bubble') {
+        tabs[0].classList.add("active");
+        title = "Bubble Pop";
+        desc = "Letters fall from space. Type each letter before it hits the bottom. Keep your streak alive to multiplier your score!";
+        document.getElementById("timeBox").style.display = "none";
+        document.getElementById("statsBar").style.display = "flex";
+      } else if (gameType === 'az') {
+        tabs[1].classList.add("active");
+        title = "A-Z Speed Challenge";
+        desc = "Type the full alphabet from A to Z as fast as possible. The timer begins the moment you hit the 'A' key!";
+        document.getElementById("timeBox").style.display = "flex";
+        document.getElementById("statsBar").style.display = "none";
+      } else if (gameType === 'rush') {
+        tabs[2].classList.add("active");
+        title = "Neon Word Rush";
+        desc = "Full words fly right to left across 3 lanes. Type the letters in order. Hit a mistake? The word typed prefix resets!";
+        document.getElementById("timeBox").style.display = "none";
+        document.getElementById("statsBar").style.display = "flex";
+      } else if (gameType === 'rhythm') {
+        tabs[3].classList.add("active");
+        title = "Rhythm Strike";
+        desc = "Hit the D, F, J, and K keys exactly when the beat blocks pass over the glowing timing bar. Match the procedural rhythm!";
+        document.getElementById("timeBox").style.display = "none";
+        document.getElementById("statsBar").style.display = "flex";
+      }
+
+      // Reset DOM state
+      gameState = 'idle';
+      if (loopId) cancelAnimationFrame(loopId);
+      ctx.fillStyle = '#05050c';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      document.getElementById("gameOverlay").style.display = "flex";
+      document.getElementById("overlayTitle").innerText = title;
+      document.getElementById("overlayDesc").innerText = desc;
+      document.getElementById("startBtn").innerText = "🎮 Insert Coin";
+      document.getElementById("extraContent").innerHTML = "";
+      
+      playSound('click');
+    }
+
+    function shakeCanvas() {
+      canvas.style.transform = "translateX(5px)";
+      setTimeout(() => canvas.style.transform = "translateX(-5px)", 50);
+      setTimeout(() => canvas.style.transform = "translateX(3px)", 100);
+      setTimeout(() => canvas.style.transform = "translateX(0)", 150);
+    }
+  </script>
+</body>
+</html>

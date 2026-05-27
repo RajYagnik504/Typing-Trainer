@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Typecraft Typing Engine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #050810;
+      --card-bg: rgba(13, 20, 38, 0.45);
+      --purple: #7F77DD;
+      --purple-glow: rgba(127, 119, 221, 0.4);
+      --teal: #1D9E75;
+      --teal-glow: rgba(29, 158, 117, 0.3);
+      --text-main: #E2E8F0;
+      --text-secondary: #94A3B8;
+      --correct: #10B981;
+      --wrong: #EF4444;
+      --wrong-bg: rgba(239, 68, 68, 0.15);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      background-color: transparent;
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+      padding: 10px;
+    }
+
+    .engine-container {
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .hud-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .hud-stat {
+      text-align: center;
+    }
+
+    .hud-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .hud-val {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--teal);
+      text-shadow: 0 0 8px var(--teal-glow);
+    }
+
+    .hud-val.purple-text {
+      color: var(--purple);
+      text-shadow: 0 0 8px var(--purple-glow);
+    }
+
+    .text-display-box {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.25rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      background: rgba(5, 8, 16, 0.6);
+      border: 1px solid rgba(127, 119, 221, 0.15);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      letter-spacing: 0.05em;
+      position: relative;
+      user-select: none;
+      word-wrap: break-word;
+      min-height: 100px;
+    }
+
+    .text-display-box span {
+      position: relative;
+      transition: all 0.1s ease;
+    }
+
+    .char-correct {
+      color: var(--correct);
+      text-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
+    }
+
+    .char-wrong {
+      color: var(--wrong);
+      background-color: var(--wrong-bg);
+      border-bottom: 2px solid var(--wrong);
+    }
+
+    .char-current {
+      color: var(--text-main);
+      background: rgba(127, 119, 221, 0.35);
+      border-radius: 2px;
+      box-shadow: 0 0 10px var(--purple-glow);
+      animation: blink 1s infinite alternate;
+    }
+
+    @keyframes blink {
+      0% { background-color: rgba(127, 119, 221, 0.2); }
+      100% { background-color: rgba(127, 119, 221, 0.6); }
+    }
+
+    .hidden-input {
+      position: absolute;
+      opacity: 0;
+      z-index: -1;
+      width: 0;
+      height: 0;
+    }
+
+    .keyboard-container {
+      display: grid;
+      grid-gap: 5px;
+      max-width: 650px;
+      margin: 0 auto;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .keyboard-row {
+      display: flex;
+      justify-content: center;
+      grid-gap: 5px;
+    }
+
+    .key {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--text-secondary);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      min-width: 32px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.1s ease;
+      user-select: none;
+    }
+
+    .key.active {
+      background: var(--purple);
+      color: #FFFFFF;
+      box-shadow: 0 0 12px var(--purple-glow);
+      transform: translateY(1px);
+    }
+
+    .key.space-key {
+      width: 200px;
+    }
+
+    .click-shield {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(5, 8, 16, 0.85);
+      border-radius: 16px;
+      z-index: 10;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+
+    .shield-prompt {
+      text-align: center;
+      color: var(--text-main);
+    }
+
+    .shield-icon {
+      font-size: 2.5rem;
+      color: var(--purple);
+      margin-bottom: 8px;
+      animation: pulse 1.5s infinite;
+      text-shadow: 0 0 10px var(--purple-glow);
+    }
+
+    .shield-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      letter-spacing: 0.05em;
+    }
+
+    .shield-sub {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.8; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="engine-container">
+    <!-- Click to Focus Shield -->
+    <div id="clickShield" class="click-shield" onclick="startTypingEngine()">
+      <div class="shield-prompt">
+        <div class="shield-icon">⌨️</div>
+        <div class="shield-title">START EXERCISE</div>
+        <div class="shield-sub">Click inside this card to activate typing focus</div>
+      </div>
+    </div>
+
+    <!-- Hidden input to capture keyboard events cleanly across devices -->
+    <input type="text" id="hiddenInput" class="hidden-input" autocomplete="off" autofocus>
+
+    <!-- Stats HUD -->
+    <div class="hud-bar">
+      <div class="hud-stat">
+        <div class="hud-label">Speed</div>
+        <div id="wpmDisplay" class="hud-val">0 WPM</div>
+      </div>
+      <div class="hud-stat">
+        <div class="hud-label">Accuracy</div>
+        <div id="accuracyDisplay" class="hud-val purple-text">100%</div>
+      </div>
+      <div class="hud-stat">
+        <div class="hud-label">Rhythm</div>
+        <div id="rhythmDisplay" class="hud-val">100%</div>
+      </div>
+      <div class="hud-stat">
+        <div class="hud-label">Progress</div>
+        <div id="progressDisplay" class="hud-val purple-text">0%</div>
+      </div>
+    </div>
+
+    <!-- Target Text Prompt -->
+    <div id="textDisplay" class="text-display-box"></div>
+
+    <!-- Visual Keyboard Guide -->
+    <div class="keyboard-container">
+      <div class="keyboard-row">
+        <div class="key" id="key-1">1</div>
+        <div class="key" id="key-2">2</div>
+        <div class="key" id="key-3">3</div>
+        <div class="key" id="key-4">4</div>
+        <div class="key" id="key-5">5</div>
+        <div class="key" id="key-6">6</div>
+        <div class="key" id="key-7">7</div>
+        <div class="key" id="key-8">8</div>
+        <div class="key" id="key-9">9</div>
+        <div class="key" id="key-0">0</div>
+        <div class="key" id="key-hyphen">-</div>
+        <div class="key" id="key-equals">=</div>
+      </div>
+      <div class="keyboard-row">
+        <div class="key" id="key-q">q</div>
+        <div class="key" id="key-w">w</div>
+        <div class="key" id="key-e">e</div>
+        <div class="key" id="key-r">r</div>
+        <div class="key" id="key-t">t</div>
+        <div class="key" id="key-y">y</div>
+        <div class="key" id="key-u">u</div>
+        <div class="key" id="key-i">i</div>
+        <div class="key" id="key-o">o</div>
+        <div class="key" id="key-p">p</div>
+        <div class="key" id="key-bracketl">[</div>
+        <div class="key" id="key-bracketr">]</div>
+      </div>
+      <div class="keyboard-row">
+        <div class="key" id="key-a">a</div>
+        <div class="key" id="key-s">s</div>
+        <div class="key" id="key-d">d</div>
+        <div class="key" id="key-f">f</div>
+        <div class="key" id="key-g">g</div>
+        <div class="key" id="key-h">h</div>
+        <div class="key" id="key-j">j</div>
+        <div class="key" id="key-k">k</div>
+        <div class="key" id="key-l">l</div>
+        <div class="key" id="key-semicolon">;</div>
+        <div class="key" id="key-apostrophe">'</div>
+      </div>
+      <div class="keyboard-row">
+        <div class="key" id="key-z">z</div>
+        <div class="key" id="key-x">x</div>
+        <div class="key" id="key-c">c</div>
+        <div class="key" id="key-v">v</div>
+        <div class="key" id="key-b">b</div>
+        <div class="key" id="key-n">n</div>
+        <div class="key" id="key-m">m</div>
+        <div class="key" id="key-comma">,</div>
+        <div class="key" id="key-period">.</div>
+        <div class="key" id="key-slash">/</div>
+      </div>
+      <div class="keyboard-row">
+        <div class="key space-key" id="key-space">space</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State variables
+    let targetText = "Welcome to Typecraft Academy. Tap to begin your typing test.";
+    let currentIndex = 0;
+    let startTime = null;
+    let timerInterval = null;
+    
+    // Rhythm tracking variables
+    let keyTimestamps = [];
+    let errorKeys = [];
+    let totalKeystrokes = 0;
+    let totalErrors = 0;
+    let finished = false;
+
+    const hiddenInput = document.getElementById("hiddenInput");
+    const textDisplay = document.getElementById("textDisplay");
+    const clickShield = document.getElementById("clickShield");
+
+    const wpmDisplay = document.getElementById("wpmDisplay");
+    const accuracyDisplay = document.getElementById("accuracyDisplay");
+    const rhythmDisplay = document.getElementById("rhythmDisplay");
+    const progressDisplay = document.getElementById("progressDisplay");
+
+    // Initialize Streamlit connection
+    function sendMessage(type, payload) {
+      window.parent.postMessage({
+        isStreamlitMessage: true,
+        type: type,
+        ...payload
+      }, "*");
+    }
+
+    // Set height of iframe dynamically
+    function updateHeight() {
+      sendMessage("streamlit:setFrameHeight", {
+        height: document.body.scrollHeight + 30
+      });
+    }
+
+    // Key to ID mapping for virtual keyboard highlight
+    function getKeyId(char) {
+      if (char === " ") return "key-space";
+      if (char === ";") return "key-semicolon";
+      if (char === "'") return "key-apostrophe";
+      if (char === ",") return "key-comma";
+      if (char === ".") return "key-period";
+      if (char === "/") return "key-slash";
+      if (char === "-") return "key-hyphen";
+      if (char === "=") return "key-equals";
+      if (char === "[") return "key-bracketl";
+      if (char === "]") return "key-bracketr";
+      
+      const alphanumeric = char.toLowerCase();
+      if (alphanumeric >= 'a' && alphanumeric <= 'z') return "key-" + alphanumeric;
+      if (alphanumeric >= '0' && alphanumeric <= '9') return "key-" + alphanumeric;
+      return null;
+    }
+
+    function initTextDisplay() {
+      textDisplay.innerHTML = "";
+      for (let i = 0; i < targetText.length; i++) {
+        const span = document.createElement("span");
+        span.innerText = targetText[i];
+        if (i === 0) span.className = "char-current";
+        textDisplay.appendChild(span);
+      }
+      currentIndex = 0;
+      startTime = null;
+      keyTimestamps = [];
+      errorKeys = [];
+      totalKeystrokes = 0;
+      totalErrors = 0;
+      finished = false;
+      
+      wpmDisplay.innerText = "0 WPM";
+      accuracyDisplay.innerText = "100%";
+      rhythmDisplay.innerText = "100%";
+      progressDisplay.innerText = "0%";
+      
+      if (timerInterval) clearInterval(timerInterval);
+    }
+
+    function startTypingEngine() {
+      clickShield.style.display = "none";
+      hiddenInput.focus();
+      initTextDisplay();
+      updateHeight();
+    }
+
+    // Keep hidden input focused when clicking inside container
+    document.addEventListener("click", (e) => {
+      if (clickShield.style.display === "none" && !finished) {
+        hiddenInput.focus();
+      }
+    });
+
+    // Listen for Streamlit render calls
+    window.addEventListener("message", (event) => {
+      const { type, args } = event.data;
+      if (type === "streamlit:render") {
+        if (args && args.target_text && args.target_text !== targetText) {
+          targetText = args.target_text;
+          initTextDisplay();
+          clickShield.style.display = "flex"; // Show shield again for the new text
+          finished = false;
+          updateHeight();
+        }
+      }
+    });
+
+    // Signal component is ready
+    sendMessage("streamlit:componentReady", { apiVersion: 1 });
+    window.onload = () => {
+      initTextDisplay();
+      updateHeight();
+    };
+
+    // Calculate real-time stats
+    function updateStats() {
+      if (!startTime) return;
+      const elapsedMinutes = (performance.now() - startTime) / 60000.0;
+      
+      // Calculate WPM: (correct chars / 5) / time
+      const correctChars = currentIndex - totalErrors;
+      const wpm = elapsedMinutes > 0.01 ? Math.round((currentIndex / 5.0) / elapsedMinutes) : 0;
+      
+      // Accuracy
+      const accuracy = totalKeystrokes > 0 ? Math.round(((totalKeystrokes - totalErrors) / totalKeystrokes) * 100) : 100;
+      
+      // Progress
+      const progress = Math.round((currentIndex / targetText.length) * 100);
+
+      // Rhythm score based on standard deviation of keystroke intervals
+      let rhythm = 100;
+      if (keyTimestamps.length > 2) {
+        let intervals = [];
+        for (let i = 1; i < keyTimestamps.length; i++) {
+          intervals.push(keyTimestamps[i] - keyTimestamps[i-1]);
+        }
+        const mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+        const variance = intervals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / intervals.length;
+        const stdDev = Math.sqrt(variance);
+        
+        // Rhythm is inversely proportional to timing variance (max out deviation at 150ms)
+        rhythm = Math.max(0, Math.min(100, Math.round(100 - (stdDev / 4.0))));
+      }
+
+      wpmDisplay.innerText = `${wpm} WPM`;
+      accuracyDisplay.innerText = `${Math.max(0, accuracy)}%`;
+      rhythmDisplay.innerText = `${rhythm}%`;
+      progressDisplay.innerText = `${progress}%`;
+    }
+
+    // Handle Keystrokes
+    hiddenInput.addEventListener("input", (e) => {
+      if (finished) return;
+      
+      const val = hiddenInput.value;
+      if (val.length === 0) return;
+      
+      // Extract the character typed
+      const charTyped = val[val.length - 1];
+      const targetChar = targetText[currentIndex];
+
+      // Reset input value to keep capturing character by character
+      hiddenInput.value = "";
+
+      // Initialize timer on first keypress
+      if (!startTime) {
+        startTime = performance.now();
+        timerInterval = setInterval(updateStats, 500);
+      }
+
+      totalKeystrokes++;
+      keyTimestamps.push(performance.now());
+
+      const spanList = textDisplay.getElementsByTagName("span");
+      const currentSpan = spanList[currentIndex];
+
+      // Remove active key highlights
+      const keys = document.querySelectorAll(".key");
+      keys.forEach(k => k.classList.remove("active"));
+
+      // Highlight corresponding key pressed
+      const keyId = getKeyId(charTyped);
+      if (keyId) {
+        const keyEl = document.getElementById(keyId);
+        if (keyEl) {
+          keyEl.classList.add("active");
+          // Remove active class shortly after
+          setTimeout(() => keyEl.classList.remove("active"), 120);
+        }
+      }
+
+      // Check correctness
+      if (charTyped === targetChar) {
+        currentSpan.className = "char-correct";
+        currentIndex++;
+        
+        if (currentIndex < targetText.length) {
+          spanList[currentIndex].className = "char-current";
+        } else {
+          // Finished the typing test!
+          finished = true;
+          clearInterval(timerInterval);
+          
+          const elapsedMinutes = (performance.now() - startTime) / 60000.0;
+          const finalWpm = elapsedMinutes > 0 ? Math.round((targetText.length / 5.0) / elapsedMinutes) : 0;
+          const finalAccuracy = Math.round(((totalKeystrokes - totalErrors) / totalKeystrokes) * 100);
+          
+          let finalRhythm = 100;
+          if (keyTimestamps.length > 2) {
+            let intervals = [];
+            for (let i = 1; i < keyTimestamps.length; i++) {
+              intervals.push(keyTimestamps[i] - keyTimestamps[i-1]);
+            }
+            const mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+            const variance = intervals.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / intervals.length;
+            const stdDev = Math.sqrt(variance);
+            finalRhythm = Math.max(0, Math.min(100, Math.round(100 - (stdDev / 4.0))));
+          }
+
+          wpmDisplay.innerText = `${finalWpm} WPM`;
+          accuracyDisplay.innerText = `${Math.max(0, finalAccuracy)}%`;
+          rhythmDisplay.innerText = `${finalRhythm}%`;
+          progressDisplay.innerText = "100%";
+
+          // Show overlay and report to Streamlit
+          clickShield.style.display = "flex";
+          document.querySelector(".shield-icon").innerText = "🏆";
+          document.querySelector(".shield-title").innerText = "TEST COMPLETE";
+          document.querySelector(".shield-sub").innerText = `Results: ${finalWpm} WPM | ${finalAccuracy}% Accuracy. Saving...`;
+
+          sendMessage("streamlit:setComponentValue", {
+            value: {
+              wpm: finalWpm,
+              accuracy: Math.max(0, finalAccuracy),
+              rhythm_score: finalRhythm,
+              errors: errorKeys
+            }
+          });
+        }
+      } else {
+        // Mistake made
+        if (currentSpan.className !== "char-wrong") {
+          currentSpan.className = "char-wrong";
+          totalErrors++;
+          
+          // Log mistake key
+          if (!errorKeys.includes(targetChar.toLowerCase())) {
+            errorKeys.push(targetChar.toLowerCase());
+          }
+        }
+      }
+
+      updateStats();
+    });
+  </script>
+</body>
+</html>

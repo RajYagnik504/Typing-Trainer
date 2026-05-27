@@ -967,6 +967,92 @@ def render_teacher_dashboard():
                     mime="text/csv"
                 )
 
+# ----------------- STUDENT PORTAL COCKPIT -----------------
+def render_student_portal():
+    student = database.get_student(st.session_state.student_id)
+    
+    # Format session history from SQLite for React app
+    history_list = []
+    for s in database.get_student_sessions(student["id"]):
+        history_list.append({
+            "date": s["date"],
+            "wpm": s["wpm"],
+            "accuracy": s["accuracy"],
+            "skillLevel": student["level"], # use current student level
+            "score": int(s["wpm"] + s["accuracy"])
+        })
+        
+    # Format achievements from SQLite for React app
+    achievements_list = []
+    for a in database.get_student_achievements(student["id"]):
+        achievements_list.append({
+            "id": a["badge_name"].lower().replace(" ", "_"),
+            "name": a["badge_name"],
+            "desc": "Earned playing TypeMaster",
+            "icon": "🏆"
+        })
+        
+    # Hide standard Streamlit margins and sidebar header for full immersion
+    st.markdown("""
+        <style>
+        .block-container {padding: 0rem; margin: 0rem;}
+        iframe {border: none; width: 100%; height: 98vh;}
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Render React TypeMaster full-screen custom component
+    result = typing_component(
+        student_id=student["id"],
+        student_name=student["name"],
+        xp=student["xp"],
+        level=student["level"],
+        history=history_list,
+        achievements=achievements_list,
+        academy_progress=student["academy_progress"] or "",
+        game_metrics=student["game_metrics"] or "",
+        key="student_master_component"
+    )
+    
+    if result is not None:
+        # React app reported new state updates!
+        updated_profile = result.get("profile", {})
+        updated_history = result.get("history", [])
+        updated_achievements = result.get("achievements", [])
+        updated_academy_progress = result.get("academy_progress", "")
+        updated_game_metrics = result.get("game_metrics", "")
+        
+        # Save updates to database
+        # 1. Compare history length to see if a new typing session was added
+        current_sessions = database.get_student_sessions(student["id"])
+        if len(updated_history) > len(current_sessions):
+            latest = updated_history[0]
+            wpm = latest.get("wpm", 0)
+            accuracy = latest.get("accuracy", 0)
+            database.save_session(student["id"], 0, 0, wpm, accuracy, 90, [])
+            
+        # 2. Compare achievements length to see if a new achievement was earned
+        current_achievements = database.get_student_achievements(student["id"])
+        if len(updated_achievements) > len(current_achievements):
+            existing_badges = [a["badge_name"] for a in current_achievements]
+            for badge in updated_achievements:
+                b_name = badge.get("name", "")
+                if b_name and b_name not in existing_badges:
+                    database.add_achievement(student["id"], b_name)
+                    
+        # 3. Update profile XP and Level in database
+        new_xp = updated_profile.get("score", student["xp"])
+        new_level = 1 + (new_xp // 300)
+        
+        if new_xp != student["xp"] or new_level != student["level"] or updated_academy_progress != student["academy_progress"] or updated_game_metrics != student["game_metrics"]:
+            database.update_student_full_profile(
+                student["id"],
+                new_xp,
+                new_level,
+                updated_academy_progress,
+                updated_game_metrics
+            )
+            st.rerun()
+
 # ----------------- MAIN NAVIGATION -----------------
 def main():
     # Sidebar
@@ -974,7 +1060,7 @@ def main():
         st.sidebar.markdown(f"<div style='text-align:center;'><h2 style='font-size:1.3rem;'>⚡ TYPECRAFT</h2><span style='color:#94A3B8; font-size:0.8rem;'>{st.session_state.student_name}</span></div><hr>", unsafe_allow_html=True)
         
         if st.session_state.user_role == "student":
-            tabs = ["Visual Curriculum", "Daily Drill", "Typing Games", "Report Card", "Leaderboard"]
+            tabs = [] # No sidebar tabs needed for students since they use horizontal menu inside React app
         else:
             tabs = ["Classrooms Admin", "Teacher Analytics"]
             
@@ -998,23 +1084,13 @@ def main():
     if not st.session_state.logged_in:
         render_landing_page()
     else:
-        if st.session_state.active_tab == "Visual Curriculum":
-            render_student_curriculum()
-        elif st.session_state.active_tab == "Daily Drill":
-            render_daily_drill()
-        elif st.session_state.active_tab == "Report Card":
-            render_progress_report_card()
-        elif st.session_state.active_tab == "Leaderboard":
-            render_student_leaderboard()
-        elif st.session_state.active_tab == "Typing Games":
-            render_typing_games()
-        elif st.session_state.active_tab == "Classrooms Admin":
-            render_teacher_dashboard()
-        elif st.session_state.active_tab == "Teacher Analytics":
-            render_teacher_dashboard()
-        elif st.session_state.active_tab.startswith("Practice_"):
-            parts = st.session_state.active_tab.split("_")
-            render_typing_practice(parts[1], parts[2])
+        if st.session_state.user_role == "student":
+            render_student_portal()
+        else:
+            if st.session_state.active_tab == "Classrooms Admin":
+                render_teacher_dashboard()
+            elif st.session_state.active_tab == "Teacher Analytics":
+                render_teacher_dashboard()
 
 if __name__ == "__main__":
     main()

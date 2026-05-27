@@ -31,9 +31,21 @@ def init_db():
         classroom_code TEXT,
         xp INTEGER DEFAULT 0,
         level INTEGER DEFAULT 1,
+        academy_progress TEXT,
+        game_metrics TEXT,
         FOREIGN KEY (classroom_code) REFERENCES classrooms(code)
     )
     """)
+    
+    try:
+        cursor.execute("ALTER TABLE students ADD COLUMN academy_progress TEXT")
+    except sqlite3.OperationalError:
+        pass
+        
+    try:
+        cursor.execute("ALTER TABLE students ADD COLUMN game_metrics TEXT")
+    except sqlite3.OperationalError:
+        pass
     
     # Sessions Table
     cursor.execute("""
@@ -130,6 +142,16 @@ def update_student_progress(student_id, xp, level):
     cursor.execute(
         "UPDATE students SET xp = ?, level = ? WHERE id = ?",
         (xp, level, student_id)
+    )
+    conn.commit()
+    conn.close()
+
+def update_student_full_profile(student_id, xp, level, academy_progress, game_metrics):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE students SET xp = ?, level = ?, academy_progress = ?, game_metrics = ? WHERE id = ?",
+        (xp, level, academy_progress, game_metrics, student_id)
     )
     conn.commit()
     conn.close()

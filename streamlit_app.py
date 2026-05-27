@@ -50,13 +50,13 @@ else:
         <iframe id="typing-app-frame" style="width:100%; height:98vh; border:none; background-color:#050505;" src=""></iframe>
         <script>
             const frame = document.getElementById('typing-app-frame');
-            const paths = ['/static/index.html', '/app/static/index.html', './static/index.html'];
+            const paths = ['/app/static/index.html', '/static/index.html', './static/index.html'];
             let loaded = false;
 
             async function checkAndLoad() {
                 for (let path of paths) {
                     try {
-                        let res = await fetch(path, { method: 'HEAD' });
+                        let res = await fetch(path);
                         if (res.ok) {
                             frame.src = path;
                             loaded = true;
@@ -67,8 +67,8 @@ else:
                     }
                 }
                 if (!loaded) {
-                    // Fallback to default local serving path
-                    frame.src = '/static/index.html';
+                    // Fallback to default cloud serving path
+                    frame.src = '/app/static/index.html';
                 }
             }
             checkAndLoad();

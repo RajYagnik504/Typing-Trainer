@@ -45,33 +45,10 @@ if not os.path.exists(os.path.join(static_dir, "index.html")):
     st.error("⚙️ Application build not found. Please compile the frontend before launching.")
     st.info("Run `npm run build` in the terminal to compile assets to the `dist/` directory.")
 else:
-    # High-compatibility iframe loader with dynamic path probing for local vs cloud deployment
-    components.html("""
-        <iframe id="typing-app-frame" style="width:100%; height:98vh; border:none; background-color:#050505;" src=""></iframe>
-        <script>
-            const frame = document.getElementById('typing-app-frame');
-            const paths = ['/app/static/index.html', '/static/index.html', './static/index.html'];
-            let loaded = false;
+    # Direct iframe rendering using Streamlit's official components.iframe
+    # Probes if running in Streamlit Cloud vs local deployment
+    is_cloud = "STREAMLIT_SHARING_MODE" in os.environ or "/app/" in os.path.abspath(__file__)
+    src_url = "/app/static/index.html" if is_cloud else "/app/static/index.html"
 
-            async function checkAndLoad() {
-                for (let path of paths) {
-                    try {
-                        let res = await fetch(path);
-                        if (res.ok) {
-                            frame.src = path;
-                            loaded = true;
-                            break;
-                        }
-                    } catch (e) {
-                        // ignore error and try next
-                    }
-                }
-                if (!loaded) {
-                    // Fallback to default cloud serving path
-                    frame.src = '/app/static/index.html';
-                }
-            }
-            checkAndLoad();
-        </script>
-    """, height=900)
+    components.iframe(src=src_url, height=950, scrolling=True)
 st.markdown("<!-- end of layout -->", unsafe_allow_html=True)

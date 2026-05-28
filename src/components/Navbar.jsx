@@ -9,7 +9,6 @@ const NAV_ITEMS = [
   { id: 'Leaderboard', icon: Trophy,   accent: 'var(--accent-amber)'  },
   { id: 'Academy',     icon: BookOpen, accent: '#5BA8F5'              },
   { id: 'Profile',     icon: User,     accent: 'var(--accent-purple)' },
-  { id: 'Teacher Portal', icon: Settings, accent: 'var(--accent-red)' },
 ];
 
 const Navbar = ({ currentTab, setCurrentTab }) => {

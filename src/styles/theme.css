@@ -698,6 +698,41 @@ main,
   overflow-x: hidden !important;
 }
 
+/* Remove sidebar ghost spacing */
+.main-content,
+main,
+.content-area,
+.page-content,
+[class*="main-content"] {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
 
+/* Fix portal page specifically */
+.portal-entrance,
+.portal-page,
+.portal-container,
+[class*="portal-entrance"],
+[class*="portal-page"] {
+  height: auto !important;
+  min-height: auto !important;
+  padding-bottom: 60px !important;
+  overflow-x: hidden !important;
+}
 
-
+/* Fix any canvas or particle background overflow */
+.portal-entrance canvas,
+.portal-page canvas,
+[class*="portal"] canvas,
+[class*="portal"] [class*="particle"],
+[class*="portal"] [class*="background"] {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}

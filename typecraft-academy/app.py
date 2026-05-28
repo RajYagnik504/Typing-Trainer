@@ -27,6 +27,8 @@ theme_css = """
     
     /* Root Scale Fix to fit 100% browser zoom */
     html, body {
+        background-color: #050810 !important;
+        background: #050810 !important;
         overflow-x: hidden !important;
     }
     
@@ -34,7 +36,8 @@ theme_css = """
         transform: scale(0.78) !important;
         transform-origin: top left !important;
         width: 128.2% !important;
-        height: 128.2% !important;
+        min-height: 128.2% !important;
+        height: auto !important;
     }
 
     /* Hide sidebar completely */
@@ -217,6 +220,110 @@ theme_css = """
             border-color: #CCCCCC !important;
         }
     }
+
+    /* Portal Entrance Layout, Sizing & Centering CSS overrides */
+    .portal-page,
+    .portal-entrance,
+    .portal-container,
+    .entry-page,
+    [class*="portal"] {
+      height: auto !important;
+      min-height: auto !important;
+      max-height: none !important;
+      padding-bottom: 40px !important;
+      overflow: visible !important;
+    }
+
+    /* Remove sidebar ghost spacing */
+    .main-content,
+    main,
+    .content-area,
+    .page-content,
+    [class*="main-content"] {
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    /* Fix portal page specifically */
+    .portal-entrance,
+    .portal-page,
+    .portal-container,
+    [class*="portal-entrance"],
+    [class*="portal-page"] {
+      height: auto !important;
+      min-height: auto !important;
+      padding-bottom: 60px !important;
+      overflow-x: hidden !important;
+    }
+
+    /* Fix any canvas or particle background overflow */
+    .portal-entrance canvas,
+    .portal-page canvas,
+    [class*="portal"] canvas,
+    [class*="portal"] [class*="particle"],
+    [class*="portal"] [class*="background"] {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      pointer-events: none !important;
+      z-index: 0 !important;
+    }
+
+    /* Target the column when page has portal marker to act as form container */
+    body:has(.portal-page-marker) [data-testid="column"]:nth-of-type(2) {
+        width: 100% !important;
+        max-width: 520px !important;
+        margin: 0 auto !important;
+        padding: 32px !important;
+        border-radius: 16px !important;
+        background: rgba(13, 20, 38, 0.45) !important;
+        border: 1px solid rgba(127, 119, 221, 0.15) !important;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+    }
+
+    /* Input fields sizing & style */
+    body:has(.portal-page-marker) [data-testid="stTextInput"] input {
+        width: 100% !important;
+        padding: 12px 16px !important;
+        font-size: 14px !important;
+        border-radius: 8px !important;
+        border: 1px solid rgba(127,119,221,0.3) !important;
+        background: rgba(255,255,255,0.06) !important;
+        color: #e8e6ff !important;
+        outline: none !important;
+    }
+
+    /* Submit button styling on portal page */
+    body:has(.portal-page-marker) div.stButton > button {
+        width: 100% !important;
+        padding: 12px 24px !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        border-radius: 10px !important;
+        cursor: pointer !important;
+        margin-top: 16px !important;
+    }
+
+    /* Page outer wrapper centering layout on portal page */
+    body:has(.portal-page-marker) [data-testid="stAppViewContainer"] > .main {
+        width: 100% !important;
+        min-height: 100vh !important;
+        height: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        padding-top: 60px !important;
+        padding-bottom: 60px !important;
+        overflow-y: auto !important;
+        position: relative !important;
+    }
 </style>
 """
 st.markdown(theme_css, unsafe_allow_html=True)
@@ -325,6 +432,7 @@ def get_unlocked_status(student_id):
 
 # ----------------- LANDING PAGE VIEW -----------------
 def render_landing_page():
+    st.markdown("<div class='portal-page-marker'></div>", unsafe_allow_html=True)
     st.markdown("""
     <div style="text-align: center; padding: 40px 20px;">
         <h1 style="font-size: 3.5rem; margin-bottom: 10px; font-family: 'Orbitron', sans-serif;">TYPECRAFT ACADEMY</h1>
@@ -337,8 +445,10 @@ def render_landing_page():
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("""
-        <div class="glass-card" style="text-align: center; padding: 30px;">
-            <h3 style="margin-bottom: 20px; text-transform: uppercase;">Portal Entrance</h3>
+        <div class="portal-header" style="text-align: center; margin-bottom: 20px;">
+            <h1 style="font-size: 2rem; font-family: 'Orbitron', monospace; text-align: center; letter-spacing: 2px;">
+                PORTAL ENTRANCE
+            </h1>
         </div>
         """, unsafe_allow_html=True)
         

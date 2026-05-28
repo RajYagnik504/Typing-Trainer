@@ -1274,11 +1274,11 @@ const Module3FingerMemory = ({ onSessionComplete }) => {
       {phase === 'playing' && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}>
           <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="80" height="80" style={{ transform: 'rotate(-90deg)' }}>
-              <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
-              <circle cx="40" cy="40" r="34" fill="none" stroke="var(--accent-purple)" strokeWidth="5"
-                strokeDasharray={`${Math.PI * 2 * 34}`}
-                strokeDashoffset={`${Math.PI * 2 * 34 * (1 - timeLeft / 30)}`}
+            <svg width="56" height="56" style={{ transform: 'rotate(-90deg)' }}>
+              <circle cx="28" cy="28" r="24" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
+              <circle cx="28" cy="28" r="24" fill="none" stroke="var(--accent-purple)" strokeWidth="5"
+                strokeDasharray={`${Math.PI * 2 * 24}`}
+                strokeDashoffset={`${Math.PI * 2 * 24 * (1 - timeLeft / 30)}`}
                 style={{ transition: 'stroke-dashoffset 0.9s linear' }} />
             </svg>
             <span style={{ position: 'absolute', fontSize: '1.4rem', fontWeight: 900, fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}>

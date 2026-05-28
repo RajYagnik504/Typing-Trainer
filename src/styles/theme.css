@@ -1,3 +1,12 @@
+:root {
+  --scale-factor: 0.78;
+  font-size: 62.5%;
+}
+
+html, body {
+  font-size: 62.5% !important;
+}
+
 /* ==========================================================================
    Clean Futuristic Precision Theme
    ========================================================================== */
@@ -479,5 +488,145 @@ h4 { font-size: 1rem !important; }
     padding: 8px 14px !important;
   }
 }
+
+/* ── GLOBAL SIZE NORMALISATION ───────────────────── */
+nav,
+.navbar,
+.top-nav,
+[class*="nav"] {
+  height: 52px !important;
+  min-height: 52px !important;
+  padding: 0 20px !important;
+  font-size: 1.3rem !important;
+}
+
+nav a,
+nav button,
+.nav-link,
+.nav-tab,
+.nav-item {
+  font-size: 1.3rem !important;
+  padding: 6px 12px !important;
+}
+
+nav svg,
+nav img,
+.nav-icon {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.logo,
+.brand,
+[class*="logo"] {
+  font-size: 1.6rem !important;
+}
+
+h1, [class*="title-xl"] { font-size: 2.4rem !important; line-height: 1.2 !important; }
+h2, [class*="title-lg"] { font-size: 1.8rem !important; line-height: 1.3 !important; }
+h3, [class*="title-md"] { font-size: 1.5rem !important; line-height: 1.4 !important; }
+h4, [class*="title-sm"] { font-size: 1.3rem !important; }
+p, span, div { font-size: inherit; }
+
+.card,
+.glass-card,
+.metric-card,
+[class*="card"] {
+  padding: 14px 18px !important;
+  border-radius: 12px !important;
+  font-size: 1.3rem !important;
+}
+
+button,
+.btn,
+[class*="btn"],
+[class*="button"] {
+  font-size: 1.2rem !important;
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+}
+
+input,
+textarea,
+select {
+  font-size: 1.3rem !important;
+  padding: 8px 12px !important;
+}
+
+.app-container,
+.main-content,
+.page-wrapper,
+.page,
+.content {
+  max-width: 1200px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 16px 20px !important;
+}
+
+/* Academy specific */
+.academy-container,
+.blind-typing-academy,
+[class*="academy"],
+[class*="practice"] {
+  max-width: 900px !important;
+  margin: 0 auto !important;
+  padding: 16px !important;
+}
+
+.module-tab,
+.practice-tab,
+[class*="module-btn"],
+[class*="tab-btn"] {
+  font-size: 1.1rem !important;
+  padding: 8px 12px !important;
+  min-width: 80px !important;
+}
+
+.module-icon,
+[class*="tab-icon"] {
+  font-size: 1.6rem !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* Keyboard map */
+[class*="keyboard"],
+[class*="key-map"] {
+  max-width: 680px !important;
+  margin: 0 auto !important;
+}
+
+[class*="key-btn"],
+[class*="keyboard-key"],
+.key {
+  width: 36px !important;
+  height: 36px !important;
+  font-size: 1.1rem !important;
+  border-radius: 5px !important;
+}
+
+/* Finger group circles */
+[class*="finger"],
+[class*="finger-group"] {
+  width: 50px !important;
+  height: 50px !important;
+  font-size: 1rem !important;
+}
+
+/* Sidebar removal */
+.sidebar,
+[class*="sidebar"],
+aside {
+  display: none !important;
+}
+
+.main-layout,
+.app-layout,
+[class*="layout"] {
+  grid-template-columns: 1fr !important;
+  display: block !important;
+}
+/* ── END SIZE NORMALISATION ──────────────────────── */
 
 

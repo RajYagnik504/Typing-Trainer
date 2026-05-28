@@ -40,7 +40,7 @@ function App() {
   };
 
   return (
-    <div className="app-container" style={styles.container}>
+    <div className="app-container" style={{ ...styles.container, fontSize: '14px' }}>
       {/* Background visual effects based on performance mode */}
       {settings.performanceMode !== 'Minimal' && (
         <>

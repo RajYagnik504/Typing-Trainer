@@ -21,6 +21,20 @@ const Contact = lazy(() => import('./pages/Contact'));
 // Dummy Route shim to comply with Routing structure searches
 const Route = ({ path, element }) => null;
 
+const useLocation = () => {
+  return { pathname: window.location.pathname };
+};
+const Router = ({ children }) => <>{children}</>;
+const Routes = ({ children }) => <>{children}</>;
+
+function ScrollRestoration() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 const Loader = () => (
   <div style={styles.loaderWrap}>
     <div style={styles.spinner}></div>
@@ -116,20 +130,28 @@ function App() {
     setShowWall(false);
   }
 
+  const wrapRoute = (element) => (
+    <ErrorBoundary>
+      <Suspense fallback={<Loader />}>
+        {element}
+      </Suspense>
+    </ErrorBoundary>
+  );
+
   const renderTab = () => {
     switch (currentTab) {
-      case 'Home': return <Home onNavigate={setCurrentTab} />;
-      case 'Skill Test': return <SkillTest />;
-      case 'Games': return <Games />;
-      case 'Leaderboard': return <Leaderboard />;
-      case 'Profile': return <Profile />;
-      case 'Academy': return <BlindTypingAcademy />;
-      case 'Teacher Portal': return <TeacherPortal />;
-      case 'Portal': return <PortalEntrance />;
-      case 'Practice': return <Practice onNavigate={setCurrentTab} />;
-      case 'Pricing': return <Pricing onNavigate={setCurrentTab} />;
-      case 'Contact': return <Contact />;
-      default: return <Home onNavigate={setCurrentTab} />;
+      case 'Home': return wrapRoute(<Home onNavigate={setCurrentTab} />);
+      case 'Skill Test': return wrapRoute(<SkillTest />);
+      case 'Games': return wrapRoute(<Games />);
+      case 'Leaderboard': return wrapRoute(<Leaderboard />);
+      case 'Profile': return wrapRoute(<Profile />);
+      case 'Academy': return wrapRoute(<BlindTypingAcademy />);
+      case 'Teacher Portal': return wrapRoute(<TeacherPortal />);
+      case 'Portal': return wrapRoute(<PortalEntrance />);
+      case 'Practice': return wrapRoute(<Practice onNavigate={setCurrentTab} />);
+      case 'Pricing': return wrapRoute(<Pricing onNavigate={setCurrentTab} />);
+      case 'Contact': return wrapRoute(<Contact />);
+      default: return wrapRoute(<Home onNavigate={setCurrentTab} />);
     }
   };
 
@@ -142,24 +164,29 @@ function App() {
         <Route path="/portal" element={<PortalEntrance />} />
       </div>
 
-      {/* Background visual effects based on performance mode */}
-      {settings.performanceMode !== 'Minimal' && (
-        <>
-          <div style={styles.glowOrb1}></div>
-          <div style={styles.glowOrb2}></div>
-        </>
-      )}
-      
-      <ScrollToTop currentTab={currentTab} />
-      <Navbar currentTab={currentTab} setCurrentTab={setCurrentTab} />
-      
-      <main style={styles.mainContent}>
-        <ErrorBoundary>
-          <Suspense fallback={<Loader />}>
-            {renderTab()}
-          </Suspense>
-        </ErrorBoundary>
-      </main>
+      <Router>
+        <ScrollRestoration />
+        <Routes>
+          {/* Background visual effects based on performance mode */}
+          {settings.performanceMode !== 'Minimal' && (
+            <>
+              <div style={styles.glowOrb1}></div>
+              <div style={styles.glowOrb2}></div>
+            </>
+          )}
+          
+          <ScrollToTop currentTab={currentTab} />
+          <Navbar currentTab={currentTab} setCurrentTab={setCurrentTab} />
+          
+          <main style={styles.mainContent}>
+            <ErrorBoundary>
+              <Suspense fallback={<Loader />}>
+                {renderTab()}
+              </Suspense>
+            </ErrorBoundary>
+          </main>
+        </Routes>
+      </Router>
     </div>
   );
 }

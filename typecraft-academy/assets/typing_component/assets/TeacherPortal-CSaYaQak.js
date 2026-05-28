@@ -1,0 +1,44 @@
+import{a as e,b as t,c as n,d as r,h as i,x as a,y as o}from"./index-KXyqC-bC.js";var s=o(`chart-column`,[[`path`,{d:`M3 3v16a2 2 0 0 0 2 2h16`,key:`c24i48`}],[`path`,{d:`M18 17V9`,key:`2bz60n`}],[`path`,{d:`M13 17V5`,key:`1frdt8`}],[`path`,{d:`M8 17v-3`,key:`17ska0`}]]),c=o(`users`,[[`path`,{d:`M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2`,key:`1yyitq`}],[`path`,{d:`M16 3.128a4 4 0 0 1 0 7.744`,key:`16gr8j`}],[`path`,{d:`M22 21v-2a4 4 0 0 0-3-3.87`,key:`kshegd`}],[`circle`,{cx:`9`,cy:`7`,r:`4`,key:`nufk8`}]]),l=a(t(),1),u=n(),d=()=>(0,u.jsxs)(`div`,{style:{minHeight:`100vh`,display:`flex`,flexDirection:`column`,alignItems:`center`,justifyContent:`center`,background:`#050810`,gap:`1rem`},children:[(0,u.jsx)(`div`,{style:{width:`40px`,height:`40px`,border:`4px solid rgba(127, 119, 221, 0.1)`,borderTop:`4px solid var(--accent-purple)`,borderRadius:`50%`,animation:`spin 1s linear infinite`}}),(0,u.jsx)(`span`,{style:{fontSize:`0.85rem`,color:`var(--text-secondary)`,fontWeight:600},children:`LOADING COGNITIVE CORE...`}),(0,u.jsx)(`style`,{children:`
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `})]}),f=({teacher:e,students:t,sessions:n,handleSignOut:r})=>e?(0,u.jsxs)(`div`,{className:`teacher-dashboard`,style:{display:`flex`,flexDirection:`column`,gap:`2rem`,padding:`1rem 0`},children:[(0,u.jsx)(`style`,{children:`
+        .teacher-portal,
+        .teacher-dashboard,
+        .teacher-container {
+          min-height: 100vh !important;
+          height: auto !important;
+          overflow-y: auto !important;
+          background: #050810 !important;
+          color: #e8e6ff !important;
+          padding-bottom: 80px !important;
+        }
+
+        .teacher-portal h1,
+        .teacher-portal h2,
+        .teacher-portal h3,
+        .teacher-dashboard h1,
+        .teacher-dashboard h2,
+        .teacher-dashboard h3 {
+          color: #ffffff !important;
+        }
+
+        .teacher-portal p,
+        .teacher-portal span,
+        .teacher-portal label,
+        .teacher-dashboard p,
+        .teacher-dashboard span,
+        .teacher-dashboard label {
+          color: #e8e6ff !important;
+        }
+
+        .teacher-portal input,
+        .teacher-portal select,
+        .teacher-portal textarea {
+          background: rgba(255,255,255,0.06) !important;
+          color: #e8e6ff !important;
+          border: 1px solid rgba(127,119,221,0.3) !important;
+          border-radius: 8px !important;
+        }
+      `}),(0,u.jsxs)(`div`,{style:{display:`flex`,justifyContent:`space-between`,alignItems:`flex-end`,borderBottom:`1px solid var(--glass-border)`,paddingBottom:`1.5rem`},children:[(0,u.jsxs)(`div`,{children:[(0,u.jsxs)(`h1`,{style:{margin:`0 0 0.5rem 0`,fontWeight:900,display:`flex`,alignItems:`center`,gap:`0.75rem`},children:[(0,u.jsx)(c,{size:28,color:`var(--accent-teal)`}),`Classroom Dashboard`]}),(0,u.jsxs)(`p`,{style:{margin:0,color:`var(--text-secondary)`},children:[`Welcome, `,e?.name||`Teacher`,`! Monitor student progress, analyze typing metrics, and manage assignments.`]})]}),(0,u.jsx)(`button`,{onClick:r,style:{padding:`0.5rem 1rem`,background:`transparent`,border:`1px solid var(--glass-border)`,color:`var(--text-secondary)`,borderRadius:`6px`,cursor:`pointer`},children:`Sign Out`})]}),(0,u.jsxs)(`div`,{style:{display:`grid`,gridTemplateColumns:`repeat(auto-fit, minmax(300px, 1fr))`,gap:`1.5rem`},children:[(0,u.jsxs)(`div`,{className:`glass-panel`,style:{padding:`1.5rem`},children:[(0,u.jsx)(`h3`,{style:{margin:`0 0 1rem 0`,color:`var(--text-secondary)`,fontSize:`0.9rem`,textTransform:`uppercase`,letterSpacing:`0.05em`},children:`Active Students`}),(0,u.jsx)(`p`,{style:{margin:0,fontSize:`2.5rem`,fontWeight:900,fontFamily:`var(--font-mono)`},children:`24`})]}),(0,u.jsxs)(`div`,{className:`glass-panel`,style:{padding:`1.5rem`},children:[(0,u.jsx)(`h3`,{style:{margin:`0 0 1rem 0`,color:`var(--text-secondary)`,fontSize:`0.9rem`,textTransform:`uppercase`,letterSpacing:`0.05em`},children:`Avg Class WPM`}),(0,u.jsx)(`p`,{style:{margin:0,fontSize:`2.5rem`,fontWeight:900,fontFamily:`var(--font-mono)`,color:`var(--accent-purple)`},children:`42.5`})]}),(0,u.jsxs)(`div`,{className:`glass-panel`,style:{padding:`1.5rem`},children:[(0,u.jsx)(`h3`,{style:{margin:`0 0 1rem 0`,color:`var(--text-secondary)`,fontSize:`0.9rem`,textTransform:`uppercase`,letterSpacing:`0.05em`},children:`Avg Accuracy`}),(0,u.jsx)(`p`,{style:{margin:0,fontSize:`2.5rem`,fontWeight:900,fontFamily:`var(--font-mono)`,color:`var(--accent-teal)`},children:`94%`})]})]}),(0,u.jsxs)(`div`,{className:`glass-panel`,style:{padding:`1.5rem`},children:[(0,u.jsx)(`h3`,{style:{margin:`0 0 1rem 0`},children:`Enrolled Student Roster`}),t&&t.length>0?t.map((e,t)=>(0,u.jsxs)(`div`,{style:{padding:`0.5rem 0`,borderBottom:`1px solid var(--glass-border)`},children:[e?.name,` - Average WPM: `,e?.wpm]},t)):(0,u.jsx)(`div`,{style:{color:`#8890b0`,padding:`20px`,textAlign:`center`,fontSize:`14px`},children:`No students yet. Add your first student to get started.`})]}),(0,u.jsxs)(`div`,{className:`glass-panel`,style:{padding:`1.5rem`},children:[(0,u.jsx)(`h3`,{style:{margin:`0 0 1rem 0`},children:`Recent Practice Sessions`}),n&&n.length>0?n.map((e,t)=>(0,u.jsxs)(`div`,{style:{padding:`0.5rem 0`,borderBottom:`1px solid var(--glass-border)`},children:[e?.studentName,` logged `,e?.wpm,` WPM on Level `,e?.level]},t)):(0,u.jsx)(`div`,{style:{color:`#8890b0`,padding:`20px`,textAlign:`center`,fontSize:`14px`},children:`No recent activity logged in this classroom.`})]}),(0,u.jsxs)(`div`,{className:`glass-panel`,style:{padding:`2rem`,textAlign:`center`,color:`var(--text-muted)`},children:[(0,u.jsx)(s,{size:48,style:{margin:`0 auto 1rem auto`,opacity:.5}}),(0,u.jsx)(`h3`,{children:`Detailed Analytics Hub`}),(0,u.jsx)(`p`,{children:`Full student analytics and reporting modules are currently being migrated to the new React architecture.`})]})]}):(0,u.jsx)(d,{}),p=()=>{let[e,t]=(0,l.useState)(void 0),[n,a]=(0,l.useState)(``),[o,s]=(0,l.useState)(``),[c,p]=(0,l.useState)([]),[m,h]=(0,l.useState)([]);return(0,l.useEffect)(()=>{console.log(`TeacherPortal mounted, teacher state:`,e);let n=localStorage.getItem(`teacher_session`);if(n)try{t(JSON.parse(n))}catch{t(null)}else t(null)},[]),e===void 0?(0,u.jsx)(d,{}):e?(0,u.jsx)(f,{teacher:e,students:c,sessions:m,handleSignOut:()=>{localStorage.removeItem(`teacher_session`),t(null)}}):(0,u.jsxs)(`div`,{className:`teacher-portal`,style:{minHeight:`100vh`,display:`flex`,flexDirection:`column`,alignItems:`center`,justifyContent:`center`,background:`#050810`,color:`#e8e6ff`,gap:`20px`,fontFamily:`Rajdhani, sans-serif`,padding:`40px`,textAlign:`center`},children:[(0,u.jsx)(`div`,{style:{fontSize:`52px`},children:`👩‍🏫`}),(0,u.jsx)(`div`,{style:{fontSize:`24px`,fontFamily:`Orbitron, monospace`,color:`#7F77DD`},children:`Teacher Portal`}),(0,u.jsx)(`div`,{style:{fontSize:`14px`,color:`#8890b0`,marginBottom:`1.5rem`},children:`Register or log in to access your dashboard.`}),(0,u.jsxs)(`div`,{className:`glass-panel animate-fadeIn`,style:{padding:`3rem`,maxWidth:`400px`,width:`100%`,textAlign:`center`},children:[(0,u.jsx)(r,{size:48,color:`var(--accent-teal)`,style:{marginBottom:`1.5rem`,marginLeft:`auto`,marginRight:`auto`}}),(0,u.jsx)(`h2`,{style:{marginBottom:`0.5rem`,fontWeight:800,color:`white`},children:`Educator Access`}),(0,u.jsx)(`p`,{style:{color:`var(--text-secondary)`,marginBottom:`2rem`,fontSize:`0.9rem`},children:`Enter your secure passcode to access classroom analytics and student progress tracking.`}),(0,u.jsxs)(`form`,{onSubmit:e=>{if(e.preventDefault(),n!==`Raj504`){s(`Invalid educator passcode`);return}let r={name:`Demo Teacher`,role:`teacher`,loggedIn:!0};localStorage.setItem(`teacher_session`,JSON.stringify(r)),t(r),s(``)},style:{display:`flex`,flexDirection:`column`,gap:`1rem`},children:[(0,u.jsx)(`input`,{type:`password`,placeholder:`Enter Passcode`,value:n,onChange:e=>a(e.target.value),style:{padding:`0.8rem 1rem`,borderRadius:`8px`,border:`1px solid var(--glass-border)`,background:`rgba(0,0,0,0.2)`,color:`white`,fontSize:`1rem`,outline:`none`}}),o&&(0,u.jsxs)(`div`,{style:{color:`#ef4444`,fontSize:`0.85rem`,display:`flex`,alignItems:`center`,justifyContent:`center`,gap:`0.5rem`},children:[(0,u.jsx)(i,{size:14}),o]}),(0,u.jsx)(`button`,{type:`submit`,style:{padding:`0.8rem`,background:`var(--accent-teal)`,color:`white`,border:`none`,borderRadius:`8px`,fontWeight:700,fontSize:`1rem`,cursor:`pointer`,boxShadow:`var(--glow-teal)`},children:`Access Dashboard`})]})]})]})};function m(t){return(0,u.jsx)(e,{children:(0,u.jsx)(p,{...t})})}export{m as default};

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getTrialTimeLeftMs, formatTimeLeft, isTrialExpired, isFullAccess, unlockOwner } from '../utils/trialManager';
 import { openRazorpay } from '../utils/razorpay';
 import { ShieldCheck, Check, AlertCircle, Sparkles, CreditCard, Ticket } from 'lucide-react';
+import { validateCoupon } from '../utils/couponValidator';
 
 export default function SubscriptionWall({ onUnlocked }) {
   const [timeLeft, setTimeLeft] = useState(getTrialTimeLeftMs());
@@ -13,6 +14,16 @@ export default function SubscriptionWall({ onUnlocked }) {
   const [paySuccess, setPaySuccess] = useState(false);
 
   useEffect(() => {
+    const saved = localStorage.getItem('coupon_applied');
+    if (saved) {
+      try {
+        const { discount } = JSON.parse(saved);
+        if (discount === 100) {
+          onUnlocked();
+          return;
+        }
+      } catch (e) {}
+    }
     if (isFullAccess()) { onUnlocked(); return; }
     const interval = setInterval(() => {
       const left = getTrialTimeLeftMs();
@@ -20,26 +31,34 @@ export default function SubscriptionWall({ onUnlocked }) {
       if (left <= 0) { setExpired(true); clearInterval(interval); }
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [onUnlocked]);
 
   function handleCouponSubmit(e) {
     e.preventDefault();
     setCouponError('');
     setCouponSuccess('');
 
-    if (couponInput.trim() === '@Monday504') {
-      try {
-        setCouponSuccess('Coupon applied! Activating lifetime license...');
-        unlockOwner();
-        setTimeout(() => {
-          onUnlocked();
-        }, 1500);
-      } catch (err) {
-        setCouponError('Failed to activate session. Try again.');
+    const result = validateCoupon(couponInput);
+    if (result.valid) {
+      if (result.discount === 100) {
+        try {
+          setCouponSuccess('Coupon applied! Activating lifetime license...');
+          unlockOwner();
+          localStorage.setItem('coupon_applied', JSON.stringify({
+            code: couponInput,
+            discount: 100,
+            appliedAt: Date.now()
+          }));
+          setTimeout(() => {
+            onUnlocked();
+          }, 1500);
+        } catch (err) {
+          setCouponError('Failed to activate session. Try again.');
+        }
       }
     } else {
       setShake(true);
-      setCouponError('Invalid promo or coupon code.');
+      setCouponError(result.message);
       setCouponInput('');
       setTimeout(() => setShake(false), 600);
     }

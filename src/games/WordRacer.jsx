@@ -77,6 +77,18 @@ const WordRacer = ({ onComplete }) => {
   const wordListRef = useRef(null);
   const startTime   = useRef(null);
 
+  const clearActiveRaceStorage = useCallback(() => {
+    localStorage.removeItem('test_deadline');
+    localStorage.removeItem('test_words');
+    localStorage.removeItem('test_current_idx');
+    localStorage.removeItem('test_correct_words');
+    localStorage.removeItem('test_wrong_words');
+    localStorage.removeItem('test_score');
+    localStorage.removeItem('test_combo');
+    localStorage.removeItem('test_word_statuses');
+    localStorage.removeItem('test_total_chars');
+  }, []);
+
   /* ── Start ───────────────────────────────────────────────────────────────── */
   const startGame = useCallback(() => {
     const queue = buildQueue(settings.difficultyMode || 'Intermediate');
@@ -91,9 +103,65 @@ const WordRacer = ({ onComplete }) => {
     setWrongWords(0);
     setTotalChars(0);
     startTime.current = Date.now();
+    
+    const deadlineVal = Date.now() + TIME_LIMIT * 1000;
+    localStorage.setItem('test_deadline', deadlineVal.toString());
+    
     setGameState('playing');
     setTimeout(() => inputRef.current?.focus(), 50);
   }, [settings.difficultyMode]);
+
+  /* ── Restore on Mount ────────────────────────────────────────────────────── */
+  useEffect(() => {
+    const deadline = localStorage.getItem('test_deadline');
+    if (deadline) {
+      const remaining = Math.ceil((Number(deadline) - Date.now()) / 1000);
+      if (remaining > 0) {
+        try {
+          const savedWords = localStorage.getItem('test_words');
+          const savedCurrentIdx = localStorage.getItem('test_current_idx');
+          const savedCorrect = localStorage.getItem('test_correct_words');
+          const savedWrong = localStorage.getItem('test_wrong_words');
+          const savedScore = localStorage.getItem('test_score');
+          const savedCombo = localStorage.getItem('test_combo');
+          const savedWordStatuses = localStorage.getItem('test_word_statuses');
+          const savedTotalChars = localStorage.getItem('test_total_chars');
+
+          if (savedWords) setWords(JSON.parse(savedWords));
+          if (savedCurrentIdx) setCurrentIdx(Number(savedCurrentIdx));
+          if (savedCorrect) setCorrectWords(Number(savedCorrect));
+          if (savedWrong) setWrongWords(Number(savedWrong));
+          if (savedScore) setScore(Number(savedScore));
+          if (savedCombo) setCombo(Number(savedCombo));
+          if (savedWordStatuses) setWordStatuses(JSON.parse(savedWordStatuses));
+          if (savedTotalChars) setTotalChars(Number(savedTotalChars));
+
+          setTimeLeft(remaining);
+          startTime.current = Date.now() - (TIME_LIMIT - remaining) * 1000;
+          setGameState('playing');
+          setTimeout(() => inputRef.current?.focus(), 50);
+        } catch (e) {
+          console.error('Failed to restore WordRacer active state:', e);
+        }
+      } else {
+        clearActiveRaceStorage();
+      }
+    }
+  }, [clearActiveRaceStorage]);
+
+  /* ── Save State Changes ──────────────────────────────────────────────────── */
+  useEffect(() => {
+    if (gameState === 'playing' && words.length > 0) {
+      localStorage.setItem('test_words', JSON.stringify(words));
+      localStorage.setItem('test_current_idx', currentIdx.toString());
+      localStorage.setItem('test_correct_words', correctWords.toString());
+      localStorage.setItem('test_wrong_words', wrongWords.toString());
+      localStorage.setItem('test_score', score.toString());
+      localStorage.setItem('test_combo', combo.toString());
+      localStorage.setItem('test_word_statuses', JSON.stringify(wordStatuses));
+      localStorage.setItem('test_total_chars', totalChars.toString());
+    }
+  }, [gameState, words, currentIdx, correctWords, wrongWords, score, combo, wordStatuses, totalChars]);
 
   /* ── Timer ───────────────────────────────────────────────────────────────── */
   useEffect(() => {
@@ -117,6 +185,7 @@ const WordRacer = ({ onComplete }) => {
     const elapsed = (Date.now() - (startTime.current || Date.now())) / 1000;
     const wpm = elapsed > 0 ? Math.round((correctWords / elapsed) * 60) : 0;
     playSuccessChime();
+    clearActiveRaceStorage();
     if (onComplete) onComplete({ wpm, score, correctWords, wrongWords });
   }, [gameState]); // eslint-disable-line
 

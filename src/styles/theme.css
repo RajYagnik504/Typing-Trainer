@@ -101,12 +101,17 @@ body {
   flex-direction: column;
 }
 
-html, body, #root {
+html, body {
   width: 100%;
-  min-height: 100% !important;
-  height: auto !important;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  overflow: visible;
 }
 
 /* Ensure main layout containers can scroll */
@@ -385,17 +390,14 @@ body.perf-minimal * {
    ========================================================================== */
 
 html, body {
-  height: auto !important;
-  min-height: 100% !important;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 #root {
-  height: auto !important;
-  min-height: 100vh !important;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
+  min-height: 100vh;
+  overflow: visible;
 }
 
 .app,

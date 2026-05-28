@@ -2,30 +2,27 @@
   box-sizing: border-box;
 }
 
+html, body {
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 html {
   font-size: 62.5%;
   scroll-behavior: smooth;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  height: auto !important;
 }
 
 body {
   font-size: 1.4rem;
   font-family: 'Rajdhani', 'Segoe UI', sans-serif;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  height: auto !important;
-  min-height: 100vh !important;
   margin: 0;
   padding: 0;
 }
 
 #root {
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  height: auto !important;
-  min-height: 100vh !important;
+  min-height: 100vh;
+  overflow: visible;
 }
 
 

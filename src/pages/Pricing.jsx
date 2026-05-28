@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Check, ShieldCheck, Mail, AlertCircle, Sparkles } from 'lucide-react';
 import { isFullAccess, unlockOwner } from '../utils/trialManager';
 import { openRazorpay } from '../utils/razorpay';
+import { validateCoupon } from '../utils/couponValidator';
 
 export default function Pricing({ onNavigate }) {
   const [promoCode, setPromoCode] = useState('');
@@ -10,6 +11,15 @@ export default function Pricing({ onNavigate }) {
   const [isPremium, setIsPremium] = useState(isFullAccess());
 
   useEffect(() => {
+    const saved = localStorage.getItem('coupon_applied');
+    if (saved) {
+      try {
+        const { discount } = JSON.parse(saved);
+        if (discount === 100) {
+          setIsPremium(true);
+        }
+      } catch (e) {}
+    }
     setIsPremium(isFullAccess());
   }, []);
 
@@ -18,17 +28,25 @@ export default function Pricing({ onNavigate }) {
     setSuccessMsg('');
     setErrorMsg('');
 
-    if (promoCode.trim() === '@Monday504') {
-      try {
-        unlockOwner();
-        setIsPremium(true);
-        setSuccessMsg('Promo code "@Monday504" applied! Lifetime access unlocked.');
-        setPromoCode('');
-      } catch (err) {
-        setErrorMsg('Failed to apply promo code. Try again.');
+    const result = validateCoupon(promoCode);
+    if (result.valid) {
+      if (result.discount === 100) {
+        try {
+          unlockOwner();
+          setIsPremium(true);
+          localStorage.setItem('coupon_applied', JSON.stringify({
+            code: promoCode,
+            discount: 100,
+            appliedAt: Date.now()
+          }));
+          setSuccessMsg(result.message);
+          setPromoCode('');
+        } catch (err) {
+          setErrorMsg('Failed to apply coupon. Try again.');
+        }
       }
     } else {
-      setErrorMsg('Invalid promo code. Please check and try again.');
+      setErrorMsg(result.message);
     }
   };
 

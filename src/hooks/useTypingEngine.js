@@ -21,9 +21,58 @@ export const useTypingEngine = (targetText) => {
   const slowKeys = useRef({}); // Track slow key presses
   const errorKeys = useRef({}); // Track error prone keys
 
+  // Restore active session on mount
+  useEffect(() => {
+    let currentUsername = 'Guest_Typist';
+    try {
+      const profileSaved = localStorage.getItem('tm_profile');
+      if (profileSaved) {
+        currentUsername = JSON.parse(profileSaved).username || 'Guest_Typist';
+      }
+    } catch (e) {}
+
+    const saved = localStorage.getItem('active_session');
+    if (saved) {
+      try {
+        const { startTime: savedStartTime, username: savedUser, testType, typedText: savedTyped, errors: savedErrors, backspaces: savedBackspaces } = JSON.parse(saved);
+        if (savedUser === currentUsername && testType === 'skill_test') {
+          setStartTime(savedStartTime);
+          setStatus('active');
+          if (savedTyped !== undefined) setTypedText(savedTyped);
+          if (savedErrors !== undefined) setErrors(savedErrors);
+          if (savedBackspaces !== undefined) setBackspaces(savedBackspaces);
+        }
+      } catch (e) {}
+    }
+  }, []);
+
+  // Persist active session state changes
+  useEffect(() => {
+    if (status === 'active' && startTime) {
+      let username = 'Guest_Typist';
+      try {
+        const profileSaved = localStorage.getItem('tm_profile');
+        if (profileSaved) {
+          username = JSON.parse(profileSaved).username || 'Guest_Typist';
+        }
+      } catch (e) {}
+
+      localStorage.setItem('active_session', JSON.stringify({
+        startTime,
+        username,
+        testType: 'skill_test',
+        targetText,
+        typedText,
+        errors,
+        backspaces
+      }));
+    }
+  }, [typedText, errors, backspaces, status, startTime, targetText]);
+
   const startTest = useCallback(() => {
+    const now = Date.now();
     setStatus('active');
-    setStartTime(Date.now());
+    setStartTime(now);
     setTypedText('');
     setErrors(0);
     setBackspaces(0);
@@ -33,7 +82,25 @@ export const useTypingEngine = (targetText) => {
     errorBursts.current = 0;
     slowKeys.current = {};
     errorKeys.current = {};
-  }, []);
+
+    let username = 'Guest_Typist';
+    try {
+      const profileSaved = localStorage.getItem('tm_profile');
+      if (profileSaved) {
+        username = JSON.parse(profileSaved).username || 'Guest_Typist';
+      }
+    } catch (e) {}
+
+    localStorage.setItem('active_session', JSON.stringify({
+      startTime: now,
+      username,
+      testType: 'skill_test',
+      targetText,
+      typedText: '',
+      errors: 0,
+      backspaces: 0
+    }));
+  }, [targetText]);
 
   const handleKeyDown = useCallback((e) => {
     if (status !== 'active') {
@@ -96,6 +163,7 @@ export const useTypingEngine = (targetText) => {
     if (currentIndex + 1 === targetText.length) {
       setStatus('finished');
       setEndTime(Date.now());
+      localStorage.removeItem('active_session');
     }
   }, [status, targetText, typedText, playKeyClick, playErrorBuzz, startTest]);
 
@@ -147,6 +215,7 @@ export const useTypingEngine = (targetText) => {
     restart: () => {
       setStatus('idle');
       setTypedText('');
+      localStorage.removeItem('active_session');
     }
   };
 };

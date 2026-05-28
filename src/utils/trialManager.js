@@ -16,6 +16,13 @@ export function isPaidUser() {
 }
 
 export function isFullAccess() {
+  try {
+    const saved = localStorage.getItem('coupon_applied');
+    if (saved) {
+      const { discount } = JSON.parse(saved);
+      if (discount === 100) return true;
+    }
+  } catch(e) {}
   return isOwnerUnlocked() || isPaidUser();
 }
 

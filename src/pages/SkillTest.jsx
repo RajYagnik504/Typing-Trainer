@@ -16,6 +16,17 @@ const SkillTest = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   useEffect(() => {
+    const saved = localStorage.getItem('active_session');
+    if (saved) {
+      try {
+        const { targetText: savedTargetText, username: savedUser } = JSON.parse(saved);
+        const currentUsername = JSON.parse(localStorage.getItem('tm_profile') || '{}').username || 'Guest_Typist';
+        if (savedUser === currentUsername && savedTargetText) {
+          setTargetText(savedTargetText);
+          return;
+        }
+      } catch(e) {}
+    }
     setTargetText(getRandomText(settings.difficultyMode));
   }, [settings.difficultyMode]);
 

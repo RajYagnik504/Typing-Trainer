@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Activity, Target, Zap, Trophy, Clock, Keyboard, Gamepad2, TrendingUp, Award } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { computeIntelligenceProfile } from '../services/mlService';
@@ -49,43 +49,69 @@ const Home = ({ onNavigate }) => {
   /* ══════════════════════════════════════════════════════════
      JSX
      ══════════════════════════════════════════════════════════ */
+  const [openFaq, setOpenFaq] = useState(null);
+
+  const faqs = [
+    {
+      q: 'Is TypeMaster suitable for primary school students?',
+      a: 'Absolutely. TypeMaster is built with student privacy in mind. There are no external ads, tracking pixels, or chat rooms. The curriculum focuses on developmental keyboard ergonomics.'
+    },
+    {
+      q: 'Can teachers track student progress and levels?',
+      a: 'Yes. By registering a classroom code in the Entry Portal, students synchronize their training speeds, accuracy ratings, and level milestones directly to the teacher\'s local roster.'
+    },
+    {
+      q: 'Are volume discount licenses available for entire school districts?',
+      a: 'Yes, our Institution Plan supports bulk licensing for 100+ students, custom subdomains, unified teacher portals, and CSV spreadsheet exports. Contact us via the Contact form.'
+    }
+  ];
+
   return (
     <div style={sty.page}>
 
-      {/* ── Hero Banner ──────────────────────────────────────────────── */}
-      <div className="glass-panel animate-fadeIn" style={sty.hero}>
-        <div style={sty.heroLeft}>
-          <div style={sty.greetingRow}>
-            <span style={sty.greetingLabel}>Welcome back,</span>
-            <span className="badge badge-purple">{profile.skillLevel}</span>
-          </div>
-          <h1 className="text-gradient" style={sty.heroName}>{profile.username}</h1>
-          <p style={sty.heroSub}>
-            {history.length
-              ? `${history.length} session${history.length > 1 ? 's' : ''} logged · Personal best ${stats.bestWpm} WPM`
-              : 'No sessions yet — run your first skill test to get started.'}
+      {/* ── Institutional Hero Banner ───────────────────────────────── */}
+      <div className="glass-panel animate-fadeIn" style={sty.schoolHero}>
+        <div style={sty.schoolHeroContent}>
+          <span className="badge badge-teal" style={{ marginBottom: '10px' }}>🏫 Educator Approved</span>
+          <h1 className="text-gradient-purple" style={sty.schoolHeroTitle}>The #1 Typing Trainer for Schools & Institutions</h1>
+          <p style={sty.schoolHeroDesc}>
+            Accelerate student muscle-memory, track metrics in real-time, and run level curriculum and keyboard games. Built with advanced cognitive analysis.
           </p>
           <div style={sty.heroCTA}>
-            <button style={sty.primaryBtn} onClick={() => onNavigate('Skill Test')}>
-              <Keyboard size={18} /> Start Skill Test
+            <button style={sty.primaryBtn} onClick={() => onNavigate('Pricing')}>
+              <Award size={16} /> Buy for Your Institution
             </button>
-            <button style={sty.secondaryBtn} onClick={() => onNavigate('Games')}>
-              <Gamepad2 size={18} /> Play Games
+            <button style={sty.secondaryBtn} onClick={() => onNavigate('Practice')}>
+              <Keyboard size={16} /> Try Practice Labs
             </button>
           </div>
         </div>
-
-        {/* Intelligence profile badge in hero */}
         <div style={sty.heroRight}>
           <div style={{ ...sty.archetypeBadge, borderColor: intel.color + '44' }}>
             <span style={sty.archetypeIcon}>{intel.icon}</span>
             <div>
               <p style={{ ...sty.archetypeName, color: intel.color }}>{intel.archetype}</p>
               <p style={sty.archetypeHint}>
-                {intel.isNewPlayer ? 'Play more games to reveal your full profile' : 'Your cognitive typing archetype'}
+                {intel.isNewPlayer ? 'Reveal your profile inside Practice' : 'Your cognitive typing archetype'}
               </p>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* ── Student Greeting Hero ────────────────────────────────────── */}
+      <div className="glass-panel animate-fadeIn" style={sty.studentHero}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+          <div style={sty.greetingRow}>
+            <span style={sty.greetingLabel}>Active Session:</span>
+            <span className="badge badge-purple">{profile.skillLevel}</span>
+          </div>
+          <h2 style={{ fontSize: '1.8rem', fontWeight: 800, margin: 0 }}>Student User: {profile.username}</h2>
+          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '1.15rem' }}>
+            {history.length
+              ? `${history.length} session${history.length > 1 ? 's' : ''} logged · Personal best ${stats.bestWpm} WPM`
+              : 'No sessions logged yet. Try launching a practice session.'}
+          </p>
         </div>
       </div>
 
@@ -230,6 +256,43 @@ const Home = ({ onNavigate }) => {
         </div>
 
       </div>
+
+      {/* ── Trusted by Schools Section ───────────────────────────────── */}
+      <div style={sty.trustedSection}>
+        <h2 style={sty.sectionTitle}>Trusted by Classroom Educators</h2>
+        <div style={sty.testimonialGrid}>
+          <div className="glass-panel" style={sty.testCard}>
+            <p style={sty.testQuote}>"TypeMaster has completely transformed my computer science lab. The progress dashboards make monitoring and grading tests a breeze!"</p>
+            <span style={sty.testAuthor}>— Mr. Henderson, IT Coordinator, Oakridge</span>
+          </div>
+          <div className="glass-panel" style={sty.testCard}>
+            <p style={sty.testQuote}>"Our students love the Arcade games, and I love that their speed profiles sync automatically. The trial and license pricing fits our budget."</p>
+            <span style={sty.testAuthor}>— Mrs. Davis, Typing Instructor, Grade 7</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── FAQ Section ─────────────────────────────────────────────── */}
+      <div className="glass-panel" style={sty.faqCard}>
+        <h2 style={sty.faqHeading}>Frequently Asked Questions</h2>
+        <div style={sty.faqList}>
+          {faqs.map((faq, i) => (
+            <div key={i} style={sty.faqItem}>
+              <button 
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                style={sty.faqQuestion}
+              >
+                <span>{faq.q}</span>
+                <span style={{ transform: openFaq === i ? 'rotate(45deg)' : 'none', transition: 'transform 0.2s' }}>+</span>
+              </button>
+              {openFaq === i && (
+                <p style={sty.faqAnswer}>{faq.a}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
     </div>
   );
 };
@@ -316,6 +379,27 @@ const sty = {
   gaugeNote: { fontSize: '0.72rem', color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.5 },
   emptyState: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem', padding: '1.5rem 0', color: 'var(--text-secondary)', fontSize: '0.9rem', textAlign: 'center' },
   emptyBtn: { marginTop: '0.25rem', background: 'none', border: 'none', color: 'var(--accent-purple)', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' },
+  
+  schoolHero: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3rem', gap: '2rem', flexWrap: 'wrap', background: 'rgba(127,119,221,0.03)', border: '1px solid rgba(127,119,221,0.15)' },
+  schoolHeroContent: { flex: 1, minWidth: '280px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left' },
+  schoolHeroTitle: { fontSize: '2.5rem', fontWeight: 900, lineHeight: 1.15, letterSpacing: '-0.04em', margin: '0 0 10px 0' },
+  schoolHeroDesc: { fontSize: '1.3rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: '0 0 20px 0', maxWidth: '580px' },
+  
+  studentHero: { padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', borderRadius: 'var(--radius-lg)' },
+  
+  trustedSection: { display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '2rem' },
+  sectionTitle: { fontSize: '1.8rem', fontWeight: 800, color: 'white', textAlign: 'center', letterSpacing: '-0.03em' },
+  testimonialGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' },
+  testCard: { padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '8px', borderLeft: '3px solid var(--accent-teal)' },
+  testQuote: { fontSize: '1.15rem', fontStyle: 'italic', color: 'var(--text-secondary)', lineHeight: 1.4, margin: 0 },
+  testAuthor: { fontSize: '0.95rem', fontWeight: 600, color: 'var(--accent-teal)', textAlign: 'right' },
+  
+  faqCard: { padding: '24px 28px', marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' },
+  faqHeading: { fontSize: '1.8rem', fontWeight: 800, color: 'white', letterSpacing: '-0.03em', margin: 0 },
+  faqList: { display: 'flex', flexDirection: 'column', gap: '8px' },
+  faqItem: { borderBottom: '1px solid var(--glass-border)', paddingBottom: '12px' },
+  faqQuestion: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: '10px 0', background: 'none', border: 'none', color: 'white', fontSize: '1.3rem', fontWeight: 700, cursor: 'pointer', textAlign: 'left' },
+  faqAnswer: { fontSize: '1.15rem', color: 'var(--text-secondary)', lineHeight: 1.4, margin: '8px 0 0 0', paddingLeft: '4px' }
 };
 
 export default Home;

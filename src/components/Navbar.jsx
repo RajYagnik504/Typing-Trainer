@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { Keyboard, Home, Activity, Gamepad2, Trophy, User, BookOpen, Settings, School } from 'lucide-react';
+import { Keyboard, Home, Activity, Gamepad2, Trophy, User, BookOpen, Settings, School, Sparkles, Mail } from 'lucide-react';
 import { useSound } from '../context/SoundContext';
 
 const NAV_ITEMS = [
-  { id: 'Home',        icon: Home,     accent: 'var(--accent-purple)' },
-  { id: 'Skill Test',  icon: Activity, accent: 'var(--accent-teal)'   },
-  { id: 'Games',       icon: Gamepad2, accent: 'var(--accent-amber)'  },
-  { id: 'Leaderboard', icon: Trophy,   accent: 'var(--accent-amber)'  },
-  { id: 'Academy',     icon: BookOpen, accent: '#5BA8F5'              },
-  { id: 'Profile',     icon: User,     accent: 'var(--accent-purple)' },
-  { id: 'Teacher Portal', icon: Settings, accent: 'var(--accent-red)' },
-  { id: 'Portal',      icon: School,   accent: '#7F77DD'              },
+  { id: 'Home',        icon: Home,       accent: 'var(--accent-purple)' },
+  { id: 'Practice',    icon: Keyboard,   accent: 'var(--accent-teal)'   },
+  { id: 'Leaderboard', icon: Trophy,     accent: 'var(--accent-amber)'  },
+  { id: 'Portal',      icon: School,     accent: '#7F77DD'              },
+  { id: 'Pricing',     icon: Sparkles,   accent: 'var(--accent-amber)'  },
+  { id: 'Contact',     icon: Mail,       accent: 'var(--accent-teal)'   },
+  { id: 'Profile',     icon: User,       accent: 'var(--accent-purple)' },
 ];
 
 const Navbar = ({ currentTab, setCurrentTab }) => {

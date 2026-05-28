@@ -14,6 +14,9 @@ const Leaderboard = lazy(() => import('./pages/Leaderboard'));
 const Profile = lazy(() => import('./pages/Profile'));
 const BlindTypingAcademy = lazy(() => import('./pages/BlindTypingAcademy'));
 const TeacherPortal = lazy(() => import('./pages/TeacherPortal'));
+const Practice = lazy(() => import('./pages/Practice'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const Contact = lazy(() => import('./pages/Contact'));
 
 // Dummy Route shim to comply with Routing structure searches
 const Route = ({ path, element }) => null;
@@ -53,6 +56,12 @@ function App() {
         setCurrentTab('Academy');
       } else if (path === '/profile') {
         setCurrentTab('Profile');
+      } else if (path === '/practice') {
+        setCurrentTab('Practice');
+      } else if (path === '/pricing') {
+        setCurrentTab('Pricing');
+      } else if (path === '/contact') {
+        setCurrentTab('Contact');
       } else if (path === '/' || path === '') {
         setCurrentTab('Home');
       }
@@ -73,7 +82,10 @@ function App() {
       'Academy': '/academy',
       'Profile': '/profile',
       'Portal': '/portal',
-      'Teacher Portal': '/teacher-portal'
+      'Teacher Portal': '/teacher-portal',
+      'Practice': '/practice',
+      'Pricing': '/pricing',
+      'Contact': '/contact'
     };
     const path = tabToPath[currentTab];
     if (path && window.location.pathname !== path) {
@@ -114,6 +126,9 @@ function App() {
       case 'Academy': return <BlindTypingAcademy />;
       case 'Teacher Portal': return <TeacherPortal />;
       case 'Portal': return <PortalEntrance />;
+      case 'Practice': return <Practice onNavigate={setCurrentTab} />;
+      case 'Pricing': return <Pricing onNavigate={setCurrentTab} />;
+      case 'Contact': return <Contact />;
       default: return <Home onNavigate={setCurrentTab} />;
     }
   };

@@ -25,6 +25,18 @@ theme_css = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
     
+    /* Root Scale Fix to fit 100% browser zoom */
+    html, body {
+        overflow-x: hidden !important;
+    }
+    
+    [data-testid="stApp"] {
+        transform: scale(0.78) !important;
+        transform-origin: top left !important;
+        width: 128.2% !important;
+        height: 128.2% !important;
+    }
+    
     /* Full Page Background */
     html, body, [data-testid="stAppViewContainer"] {
         background: radial-gradient(circle at 50% 50%, #0b0f19 0%, #050810 100%) !important;

@@ -117,7 +117,7 @@ export default function PortalEntrance() {
       setTeacherError('Please enter a classroom name.');
       return;
     }
-    if (teacherPasscode !== 'teach2024') {
+    if (teacherPasscode !== 'Raj504') {
       setTeacherError('Invalid educator passcode.');
       return;
     }

@@ -37,22 +37,30 @@ function App() {
   const [accessGranted, setAccessGranted] = useState(isFullAccess());
   const [showWall, setShowWall] = useState(false);
 
-  // Sync pathname route to tab state on mount
+  // Sync pathname route to tab state on mount & handle browser Back/Forward navigation
   useEffect(() => {
-    const path = window.location.pathname;
-    if (path === '/portal') {
-      setCurrentTab('Portal');
-    } else if (path === '/games') {
-      setCurrentTab('Games');
-    } else if (path === '/skill-test') {
-      setCurrentTab('Skill Test');
-    } else if (path === '/leaderboard') {
-      setCurrentTab('Leaderboard');
-    } else if (path === '/academy') {
-      setCurrentTab('Academy');
-    } else if (path === '/profile') {
-      setCurrentTab('Profile');
-    }
+    const syncPathToTab = () => {
+      const path = window.location.pathname;
+      if (path === '/portal') {
+        setCurrentTab('Portal');
+      } else if (path === '/games') {
+        setCurrentTab('Games');
+      } else if (path === '/skill-test') {
+        setCurrentTab('Skill Test');
+      } else if (path === '/leaderboard') {
+        setCurrentTab('Leaderboard');
+      } else if (path === '/academy') {
+        setCurrentTab('Academy');
+      } else if (path === '/profile') {
+        setCurrentTab('Profile');
+      } else if (path === '/' || path === '') {
+        setCurrentTab('Home');
+      }
+    };
+
+    syncPathToTab();
+    window.addEventListener('popstate', syncPathToTab);
+    return () => window.removeEventListener('popstate', syncPathToTab);
   }, []);
 
   // Sync tab state changes back to window pathname

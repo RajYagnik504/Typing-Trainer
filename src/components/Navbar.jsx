@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Keyboard, Home, Activity, Gamepad2, Trophy, User, BookOpen, Settings } from 'lucide-react';
+import { Keyboard, Home, Activity, Gamepad2, Trophy, User, BookOpen, Settings, School } from 'lucide-react';
 import { useSound } from '../context/SoundContext';
 
 const NAV_ITEMS = [
@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { id: 'Academy',     icon: BookOpen, accent: '#5BA8F5'              },
   { id: 'Profile',     icon: User,     accent: 'var(--accent-purple)' },
   { id: 'Teacher Portal', icon: Settings, accent: 'var(--accent-red)' },
+  { id: 'Portal',      icon: School,   accent: '#7F77DD'              },
 ];
 
 const Navbar = ({ currentTab, setCurrentTab }) => {

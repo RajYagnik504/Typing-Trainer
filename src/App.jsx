@@ -1,8 +1,11 @@
-import React, { lazy, Suspense, useState } from 'react';
+import React, { lazy, Suspense, useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import { useAppContext } from './context/AppContext';
 import ScrollToTop from './components/ScrollToTop';
 import ErrorBoundary from './components/ErrorBoundary';
+import { startTrialIfNotStarted, isFullAccess, isTrialExpired } from './utils/trialManager';
+import SubscriptionWall from './components/SubscriptionWall';
+
 const Home = lazy(() => import('./pages/Home'));
 const SkillTest = lazy(() => import('./pages/SkillTest'));
 const Games = lazy(() => import('./pages/Games'));
@@ -27,6 +30,31 @@ const Loader = () => (
 function App() {
   const [currentTab, setCurrentTab] = useState('Home');
   const { settings } = useAppContext();
+  const [accessGranted, setAccessGranted] = useState(isFullAccess());
+  const [showWall, setShowWall] = useState(false);
+
+  useEffect(() => {
+    if (!isFullAccess()) {
+      startTrialIfNotStarted();
+      if (isTrialExpired()) {
+        setShowWall(true);
+      } else {
+        // Check every second if trial expires
+        const check = setInterval(() => {
+          if (isTrialExpired()) {
+            setShowWall(true);
+            clearInterval(check);
+          }
+        }, 1000);
+        return () => clearInterval(check);
+      }
+    }
+  }, []);
+
+  function handleUnlocked() {
+    setAccessGranted(true);
+    setShowWall(false);
+  }
 
   const renderTab = () => {
     switch (currentTab) {
@@ -43,6 +71,7 @@ function App() {
 
   return (
     <div className="app-container" style={{ ...styles.container, fontSize: '14px' }}>
+      <SubscriptionWall onUnlocked={handleUnlocked} />
       {/* Background visual effects based on performance mode */}
       {settings.performanceMode !== 'Minimal' && (
         <>

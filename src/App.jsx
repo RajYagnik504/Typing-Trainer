@@ -9,6 +9,7 @@ const Games = lazy(() => import('./pages/Games'));
 const Leaderboard = lazy(() => import('./pages/Leaderboard'));
 const Profile = lazy(() => import('./pages/Profile'));
 const BlindTypingAcademy = lazy(() => import('./pages/BlindTypingAcademy'));
+const TeacherPortal = lazy(() => import('./pages/TeacherPortal'));
 
 const Loader = () => (
   <div style={styles.loaderWrap}>
@@ -35,6 +36,7 @@ function App() {
       case 'Leaderboard': return <Leaderboard />;
       case 'Profile': return <Profile />;
       case 'Academy': return <BlindTypingAcademy />;
+      case 'Teacher Portal': return <TeacherPortal />;
       default: return <Home onNavigate={setCurrentTab} />;
     }
   };

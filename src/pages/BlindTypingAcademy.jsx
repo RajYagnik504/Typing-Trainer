@@ -955,8 +955,8 @@ const Module1KeyboardMap = () => {
               color: fc.hex,
               transform: activeGroup === fg ? 'scale(1.05)' : 'scale(1)',
             }}>
-              <span style={{ fontSize: '0.65rem', fontWeight: 700 }}>{fg}</span>
-              <span style={{ fontSize: '0.75rem' }}>{fc.name}</span>
+              <span style={{ fontSize: '10px', fontWeight: 800, lineHeight: 1 }}>{fg}</span>
+              <span style={{ fontSize: '7px', opacity: 0.8, lineHeight: 1, marginTop: '2px' }}>{fc.name.split(' ')[1]}</span>
             </button>
           );
         })}
@@ -2050,26 +2050,39 @@ const BlindTypingAcademy = () => {
    STYLES
    ══════════════════════════════════════════════════════════════════════════ */
 const cs = {
-  page: { display: 'flex', flexDirection: 'column', gap: '1.5rem' },
-  heroHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '2rem 2.5rem', flexWrap: 'wrap', gap: '1.5rem' },
-  moduleNav: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: '0.75rem' },
+  page: { display: 'flex', flexDirection: 'column', gap: '1rem' },
+  heroHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem 1.75rem', flexWrap: 'wrap', gap: '1.5rem' },
+  moduleNav: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(120px,1fr))', gap: '0.5rem' },
   moduleNavBtn: {
-    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.35rem',
-    padding: '1rem 0.75rem', borderRadius: 'var(--radius-lg)', border: '1px solid',
+    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem',
+    padding: '0.65rem 0.5rem', borderRadius: 'var(--radius-md)', border: '1px solid',
     background: 'transparent', cursor: 'pointer', transition: 'all 0.2s', textAlign: 'center',
+    fontSize: '13px',
   },
-  modulePanel: { padding: '2rem', minHeight: '400px' },
-  moduleWrap: { display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: 'center', width: '100%' },
+  modulePanel: { padding: '1.5rem', minHeight: '400px' },
+  moduleWrap: { display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center', width: '100%' },
   moduleHeader: { textAlign: 'center', maxWidth: '560px', margin: '0 auto' },
-  moduleTitle: { fontSize: '1.6rem', fontWeight: 900, letterSpacing: '-0.03em', margin: '0 0 0.5rem' },
-  moduleSub: { color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.65 },
-  kbWrap: { overflowX: 'auto', padding: '0.75rem', background: 'rgba(0,0,0,0.25)', borderRadius: 'var(--radius-lg)', maxWidth: '100%' },
-  fingerLegend: { display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' },
-  fingerChip: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.15rem', padding: '0.45rem 0.85rem', borderRadius: 'var(--radius-full)', cursor: 'pointer', transition: 'all 0.2s' },
-  homeRowGuide: { padding: '1.25rem 2rem', display: 'flex', justifyContent: 'center', width: '100%', maxWidth: '640px' },
-  handBox: { display: 'flex', flexDirection: 'column', gap: '0.4rem' },
-  keyGuideRow: { display: 'flex', alignItems: 'center', gap: '0.6rem' },
-  keyTag: { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '0.3rem', padding: '0.15rem 0.6rem', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.9rem' },
+  moduleTitle: { fontSize: '1.3rem', fontWeight: 900, letterSpacing: '-0.03em', margin: '0 0 0.4rem' },
+  moduleSub: { color: 'var(--text-secondary)', fontSize: '0.82rem', lineHeight: 1.55 },
+  kbWrap: { overflowX: 'auto', padding: '0.75rem', background: 'rgba(0,0,0,0.25)', borderRadius: 'var(--radius-lg)', maxWidth: '680px', width: '100%' },
+  fingerLegend: { display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'center' },
+  fingerChip: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.1rem',
+    width: '52px',
+    height: '52px',
+    borderRadius: '50%',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+    fontSize: '10px',
+  },
+  homeRowGuide: { padding: '0.85rem 1.25rem', display: 'flex', justifyContent: 'center', width: '100%', maxWidth: '640px' },
+  handBox: { display: 'flex', flexDirection: 'column', gap: '0.25rem' },
+  keyGuideRow: { display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '4px 0' },
+  keyTag: { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '0.3rem', padding: '2px 8px', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '13px' },
   levelGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: '0.75rem', width: '100%', maxWidth: '580px' },
   levelBtn: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.35rem', padding: '0.85rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)', cursor: 'pointer', transition: 'all 0.2s' },
   textBox: { padding: '1.5rem', fontFamily: 'var(--font-mono)', fontSize: '1.1rem', lineHeight: 2, letterSpacing: '0.05em', maxWidth: '640px', width: '100%', wordBreak: 'break-all', display: 'flex', flexWrap: 'wrap', gap: '2px 0px' },

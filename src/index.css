@@ -1,3 +1,10 @@
 @import './styles/theme.css';
 
-/* Any other global utility classes can go here if needed */
+html {
+  font-size: 14px;
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+

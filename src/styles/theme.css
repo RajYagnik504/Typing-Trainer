@@ -410,3 +410,74 @@ html, body {
   overflow: visible !important;
 }
 
+/* ==========================================================================
+   STEP 2 & 5 Sizing and Spacing Fixes
+   ========================================================================== */
+
+.app-container,
+.main-content,
+.page-wrapper,
+.layout {
+  max-width: 1400px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+}
+
+.navbar,
+.nav,
+.top-nav,
+nav {
+  width: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100 !important;
+  height: 56px !important;
+  min-height: 56px !important;
+  max-height: 56px !important;
+  padding: 0 24px !important;
+  font-size: 13px !important;
+}
+
+h1 { font-size: 2rem !important; }
+h2 { font-size: 1.5rem !important; }
+h3 { font-size: 1.15rem !important; }
+h4 { font-size: 1rem !important; }
+
+.card,
+.glass-card,
+.metric-card {
+  padding: 16px 20px !important;
+  border-radius: 12px !important;
+}
+
+/* ==========================================================================
+   STEP 6 Zoom Normalisation Overrides
+   ========================================================================== */
+
+/* Zoom normalisation — ensures correct sizing at 100% browser zoom */
+@media screen and (min-width: 1024px) {
+  .app-container,
+  .main-content,
+  .page-wrapper {
+    zoom: 1 !important;
+    transform: none !important;
+  }
+
+  .academy-container,
+  .blind-typing-academy,
+  .practice-labs {
+    max-width: 960px !important;
+    margin: 0 auto !important;
+    padding: 20px 24px !important;
+  }
+
+  .module-tab-btn,
+  .practice-tab {
+    font-size: 12px !important;
+    padding: 8px 14px !important;
+  }
+}
+
+

@@ -3,8 +3,6 @@ import Navbar from './components/Navbar';
 import { useAppContext } from './context/AppContext';
 import ScrollToTop from './components/ScrollToTop';
 import ErrorBoundary from './components/ErrorBoundary';
-import { startTrialIfNotStarted, isFullAccess, isTrialExpired } from './utils/trialManager';
-import SubscriptionWall from './components/SubscriptionWall';
 import PortalEntrance from './pages/PortalEntrance';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -15,7 +13,7 @@ const Profile = lazy(() => import('./pages/Profile'));
 const BlindTypingAcademy = lazy(() => import('./pages/BlindTypingAcademy'));
 const TeacherPortal = lazy(() => import('./pages/TeacherPortal'));
 const Practice = lazy(() => import('./pages/Practice'));
-const Pricing = lazy(() => import('./pages/Pricing'));
+// Pricing page deleted
 const Contact = lazy(() => import('./pages/Contact'));
 
 // Dummy Route shim to comply with Routing structure searches
@@ -51,11 +49,17 @@ const Loader = () => (
 function App() {
   const [currentTab, setCurrentTab] = useState('Home');
   const { settings } = useAppContext();
-  const [accessGranted, setAccessGranted] = useState(isFullAccess());
-  const [showWall, setShowWall] = useState(false);
 
-  // Sync pathname route to tab state on mount & handle browser Back/Forward navigation
+  // Clear trial, payment, and coupon related keys on mount, and sync path state
   useEffect(() => {
+    localStorage.removeItem('coupon_applied');
+    localStorage.removeItem('subscription_plan');
+    localStorage.removeItem('trial_deadline');
+    localStorage.removeItem('tc_trial_start');
+    localStorage.removeItem('tc_paid_user');
+    localStorage.removeItem('tc_owner_unlocked');
+    localStorage.removeItem('active_session');
+
     const syncPathToTab = () => {
       const path = window.location.pathname;
       if (path === '/portal') {
@@ -72,8 +76,6 @@ function App() {
         setCurrentTab('Profile');
       } else if (path === '/practice') {
         setCurrentTab('Practice');
-      } else if (path === '/pricing') {
-        setCurrentTab('Pricing');
       } else if (path === '/contact') {
         setCurrentTab('Contact');
       } else if (path === '/' || path === '') {
@@ -98,7 +100,6 @@ function App() {
       'Portal': '/portal',
       'Teacher Portal': '/teacher-portal',
       'Practice': '/practice',
-      'Pricing': '/pricing',
       'Contact': '/contact'
     };
     const path = tabToPath[currentTab];
@@ -106,29 +107,6 @@ function App() {
       window.history.pushState(null, '', path);
     }
   }, [currentTab]);
-
-  useEffect(() => {
-    if (!isFullAccess()) {
-      startTrialIfNotStarted();
-      if (isTrialExpired()) {
-        setShowWall(true);
-      } else {
-        // Check every second if trial expires
-        const check = setInterval(() => {
-          if (isTrialExpired()) {
-            setShowWall(true);
-            clearInterval(check);
-          }
-        }, 1000);
-        return () => clearInterval(check);
-      }
-    }
-  }, []);
-
-  function handleUnlocked() {
-    setAccessGranted(true);
-    setShowWall(false);
-  }
 
   const wrapRoute = (element) => (
     <ErrorBoundary>
@@ -149,7 +127,6 @@ function App() {
       case 'Teacher Portal': return wrapRoute(<TeacherPortal />);
       case 'Portal': return wrapRoute(<PortalEntrance />);
       case 'Practice': return wrapRoute(<Practice onNavigate={setCurrentTab} />);
-      case 'Pricing': return wrapRoute(<Pricing onNavigate={setCurrentTab} />);
       case 'Contact': return wrapRoute(<Contact />);
       default: return wrapRoute(<Home onNavigate={setCurrentTab} />);
     }
@@ -157,7 +134,6 @@ function App() {
 
   return (
     <div className="app-container" style={{ ...styles.container, fontSize: '14px' }}>
-      <SubscriptionWall onUnlocked={handleUnlocked} />
       
       {/* Route matching for routing compliance checks */}
       <div style={{ display: 'none' }}>

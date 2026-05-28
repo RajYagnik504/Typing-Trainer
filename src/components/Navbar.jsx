@@ -7,7 +7,6 @@ const NAV_ITEMS = [
   { id: 'Practice',    icon: Keyboard,   accent: 'var(--accent-teal)'   },
   { id: 'Leaderboard', icon: Trophy,     accent: 'var(--accent-amber)'  },
   { id: 'Portal',      icon: School,     accent: '#7F77DD'              },
-  { id: 'Pricing',     icon: Sparkles,   accent: 'var(--accent-amber)'  },
   { id: 'Contact',     icon: Mail,       accent: 'var(--accent-teal)'   },
   { id: 'Profile',     icon: User,       accent: 'var(--accent-purple)' },
 ];

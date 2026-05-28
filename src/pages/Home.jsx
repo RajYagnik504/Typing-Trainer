@@ -61,8 +61,8 @@ const Home = ({ onNavigate }) => {
       a: 'Yes. By registering a classroom code in the Entry Portal, students synchronize their training speeds, accuracy ratings, and level milestones directly to the teacher\'s local roster.'
     },
     {
-      q: 'Are volume discount licenses available for entire school districts?',
-      a: 'Yes, our Institution Plan supports bulk licensing for 100+ students, custom subdomains, unified teacher portals, and CSV spreadsheet exports. Contact us via the Contact form.'
+      q: 'How much does TypeMaster cost for schools?',
+      a: 'TypeMaster is 100% free and fully unlocked for all students, educators, and schools. There are no paid upgrades, subscriptions, or hidden charges. Simply set up your classroom in the Portal and start typing.'
     }
   ];
 
@@ -78,8 +78,8 @@ const Home = ({ onNavigate }) => {
             Accelerate student muscle-memory, track metrics in real-time, and run level curriculum and keyboard games. Built with advanced cognitive analysis.
           </p>
           <div style={sty.heroCTA}>
-            <button style={sty.primaryBtn} onClick={() => onNavigate('Pricing')}>
-              <Award size={16} /> Buy for Your Institution
+            <button style={sty.primaryBtn} onClick={() => onNavigate('Contact')}>
+              <Award size={16} /> Request School Setup
             </button>
             <button style={sty.secondaryBtn} onClick={() => onNavigate('Practice')}>
               <Keyboard size={16} /> Try Practice Labs
@@ -266,7 +266,7 @@ const Home = ({ onNavigate }) => {
             <span style={sty.testAuthor}>— Mr. Henderson, IT Coordinator, Oakridge</span>
           </div>
           <div className="glass-panel" style={sty.testCard}>
-            <p style={sty.testQuote}>"Our students love the Arcade games, and I love that their speed profiles sync automatically. The trial and license pricing fits our budget."</p>
+            <p style={sty.testQuote}>"Our students love the Arcade games, and I love that their speed profiles sync automatically. The setup was completely free and fast."</p>
             <span style={sty.testAuthor}>— Mrs. Davis, Typing Instructor, Grade 7</span>
           </div>
         </div>

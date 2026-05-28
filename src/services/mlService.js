@@ -18,7 +18,7 @@ export const predictSkill = async (metrics) => {
   try {
     const controller = new AbortController();
     const tid        = setTimeout(() => controller.abort(), 3000);
-    const response   = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/predict`, {
+    const response   = await fetch(`${import.meta.env.VITE_API_URL || 'https://typing-trainer-swart.vercel.app'}/predict`, {
       method : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body   : JSON.stringify(payload),

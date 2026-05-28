@@ -249,13 +249,15 @@ theme_css = """
     /* Fix portal page specifically */
     .portal-entrance,
     .portal-page,
+    .portal-wrapper,
     .portal-container,
-    [class*="portal-entrance"],
-    [class*="portal-page"] {
+    [class*="portal-entr"],
+    [class*="portal-wrap"] {
       height: auto !important;
       min-height: auto !important;
-      padding-bottom: 60px !important;
+      padding-bottom: 48px !important;
       overflow-x: hidden !important;
+      overflow-y: auto !important;
     }
 
     /* Fix any canvas or particle background overflow */
@@ -320,7 +322,7 @@ theme_css = """
         align-items: center !important;
         justify-content: flex-start !important;
         padding-top: 60px !important;
-        padding-bottom: 60px !important;
+        padding-bottom: 48px !important;
         overflow-y: auto !important;
         position: relative !important;
     }

@@ -1,13 +1,15 @@
-import React, { useState, Suspense } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import Navbar from './components/Navbar';
 import { useAppContext } from './context/AppContext';
-
-import Home from './pages/Home';
-import SkillTest from './pages/SkillTest';
-import Games from './pages/Games';
-import Leaderboard from './pages/Leaderboard';
-import Profile from './pages/Profile';
-import BlindTypingAcademy from './pages/BlindTypingAcademy';
+import ScrollToTop from './components/ScrollToTop';
+import ErrorBoundary from './components/ErrorBoundary';
+const Home = lazy(() => import('./pages/Home'));
+const SkillTest = lazy(() => import('./pages/SkillTest'));
+const Games = lazy(() => import('./pages/Games'));
+const Leaderboard = lazy(() => import('./pages/Leaderboard'));
+const Profile = lazy(() => import('./pages/Profile'));
+const BlindTypingAcademy = lazy(() => import('./pages/BlindTypingAcademy'));
+const TeacherPortal = lazy(() => import('./pages/TeacherPortal'));
 
 const Loader = () => (
   <div style={styles.loaderWrap}>
@@ -34,6 +36,7 @@ function App() {
       case 'Leaderboard': return <Leaderboard />;
       case 'Profile': return <Profile />;
       case 'Academy': return <BlindTypingAcademy />;
+      case 'Teacher Portal': return <TeacherPortal />;
       default: return <Home onNavigate={setCurrentTab} />;
     }
   };
@@ -48,12 +51,15 @@ function App() {
         </>
       )}
       
+      <ScrollToTop currentTab={currentTab} />
       <Navbar currentTab={currentTab} setCurrentTab={setCurrentTab} />
       
       <main style={styles.mainContent}>
-        <Suspense fallback={<Loader />}>
-          {renderTab()}
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<Loader />}>
+            {renderTab()}
+          </Suspense>
+        </ErrorBoundary>
       </main>
     </div>
   );
@@ -71,6 +77,7 @@ const styles = {
   mainContent: {
     flex: 1,
     padding: '2rem',
+    paddingBottom: '80px',
     maxWidth: '1200px',
     margin: '0 auto',
     width: '100%',

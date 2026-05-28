@@ -337,7 +337,7 @@ def render_landing_page():
                     st.session_state.logged_in = True
                     st.session_state.user_role = "teacher"
                     st.session_state.student_name = teacher_name
-                    st.session_state.active_tab = "Classrooms Management"
+                    st.session_state.active_tab = "Classrooms Admin"
                     st.success("Authenticated Successfully!")
                     st.rerun()
                 else:

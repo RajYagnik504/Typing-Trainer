@@ -1491,7 +1491,16 @@ const Module5AudioGuided = ({ onSessionComplete }) => {
     }, 1000);
   };
 
-  useEffect(() => () => clearInterval(timerRef.current), []);
+  // Cleanup on unmount AND whenever phase leaves 'playing'
+  useEffect(() => {
+    return () => clearInterval(timerRef.current);
+  }, []);
+
+  useEffect(() => {
+    if (phase !== 'playing') {
+      clearInterval(timerRef.current);
+    }
+  }, [phase]);
 
   useEffect(() => {
     if (phase !== 'playing') return;
@@ -1631,6 +1640,8 @@ const Module6BlindChallenges = ({ blindScore, rank }) => {
   const timerRef = useRef(null);
 
   const startChallenge = (cid) => {
+    // Always clear any running timer before starting a new one
+    clearInterval(timerRef.current);
     setChallenge(cid);
     setScore(0); setTimeLeft(30); setInputVal('');
     setPhase('playing');

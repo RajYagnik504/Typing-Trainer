@@ -370,7 +370,13 @@ const BubblePop = ({ onComplete }) => {
         
         <canvas 
           ref={canvasRef} 
-          style={styles.canvas}
+          style={{
+            width: '100%',
+            height: 'auto',
+            minHeight: '400px',
+            display: 'block',
+            borderRadius: '12px'
+          }}
         />
         
         {gameState === 'start' && (

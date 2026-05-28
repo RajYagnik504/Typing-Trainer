@@ -36,6 +36,41 @@ theme_css = """
         width: 128.2% !important;
         height: 128.2% !important;
     }
+
+    /* Hide sidebar completely */
+    [data-testid="stSidebar"],
+    [data-testid="collapsedControl"],
+    .css-1d391kg,
+    .css-18e3th9 {
+      display: none !important;
+      width: 0 !important;
+      min-width: 0 !important;
+      visibility: hidden !important;
+    }
+
+    /* Make main content full width */
+    .main .block-container,
+    [data-testid="stAppViewContainer"] > .main {
+      max-width: 100% !important;
+      padding-left: 20px !important;
+      padding-right: 20px !important;
+      margin-left: 0 !important;
+    }
+
+    /* Fix game canvas overflow */
+    iframe, canvas {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
+      min-height: 400px !important;
+    }
+
+    /* Fix scroll */
+    .main .block-container {
+      overflow-y: auto !important;
+      max-height: none !important;
+      padding-bottom: 80px !important;
+    }
     
     /* Full Page Background */
     html, body, [data-testid="stAppViewContainer"] {
@@ -846,8 +881,20 @@ def render_typing_games():
 
 # ----------------- TEACHER CLASSROOM MANAGEMENT VIEW -----------------
 def render_teacher_dashboard():
-    st.markdown("<h1 class='title-neon'>TEACHER PORTAL cockpit</h1>", unsafe_allow_html=True)
-    
+    cols = st.columns([8, 2])
+    with cols[0]:
+        st.markdown("<h1 class='title-neon' style='margin:0; font-size: 2.2rem;'>TEACHER PORTAL</h1><span style='color:#94A3B8; font-size:0.9rem;'>Instructor: " + st.session_state.student_name + "</span>", unsafe_allow_html=True)
+    with cols[1]:
+        if st.button("🚪 Logout", key="teacher_logout_btn"):
+            st.session_state.logged_in = False
+            st.session_state.user_role = None
+            st.session_state.student_id = None
+            st.session_state.student_name = ""
+            st.session_state.classroom_code = ""
+            st.session_state.active_tab = "Home"
+            st.rerun()
+            
+    st.write("<br>", unsafe_allow_html=True)
     tab1, tab2, tab3 = st.tabs(["Classrooms Admin", "Student Statistics", "CSV Exports"])
     
     with tab1:
@@ -1007,10 +1054,24 @@ def render_student_portal():
     # Hide standard Streamlit margins and sidebar header for full immersion
     st.markdown("""
         <style>
-        .block-container {padding: 0rem; margin: 0rem;}
-        iframe {border: none; width: 100%; height: 98vh;}
+        .block-container {padding: 0.5rem 1rem; margin: 0rem;}
+        iframe {border: none; width: 100%; height: 93vh;}
         </style>
     """, unsafe_allow_html=True)
+
+    # Create top row for student to log out
+    cols = st.columns([8, 2])
+    with cols[0]:
+        st.markdown(f"<div style='margin-top: 5px;'><span style='font-family:\"Orbitron\", sans-serif; font-size:1.2rem; color:#7F77DD; font-weight:700;'>⚡ TYPECRAFT</span> <span style='color:#94A3B8; font-size:0.9rem;'>| Student: {student['name']}</span></div>", unsafe_allow_html=True)
+    with cols[1]:
+        if st.button("🚪 Logout", key="student_logout_btn"):
+            st.session_state.logged_in = False
+            st.session_state.user_role = None
+            st.session_state.student_id = None
+            st.session_state.student_name = ""
+            st.session_state.classroom_code = ""
+            st.session_state.active_tab = "Home"
+            st.rerun()
 
     # Render React TypeMaster full-screen custom component
     result = typing_component(
@@ -1067,31 +1128,6 @@ def render_student_portal():
 
 # ----------------- MAIN NAVIGATION -----------------
 def main():
-    # Sidebar
-    if st.session_state.logged_in:
-        st.sidebar.markdown(f"<div style='text-align:center;'><h2 style='font-size:1.3rem;'>⚡ TYPECRAFT</h2><span style='color:#94A3B8; font-size:0.8rem;'>{st.session_state.student_name}</span></div><hr>", unsafe_allow_html=True)
-        
-        if st.session_state.user_role == "student":
-            tabs = [] # No sidebar tabs needed for students since they use horizontal menu inside React app
-        else:
-            tabs = ["Classrooms Admin", "Teacher Analytics"]
-            
-        for tab in tabs:
-            if st.sidebar.button(tab, key=f"sidebar_btn_{tab}"):
-                st.session_state.active_tab = tab
-                
-        st.sidebar.write("<br><br>", unsafe_allow_html=True)
-        if st.sidebar.button("🚪 Logout"):
-            st.session_state.logged_in = False
-            st.session_state.user_role = None
-            st.session_state.student_id = None
-            st.session_state.student_name = ""
-            st.session_state.classroom_code = ""
-            st.session_state.active_tab = "Home"
-            st.rerun()
-    else:
-        st.sidebar.markdown("<div style='text-align:center;'><h2>⚡ TYPECRAFT</h2><span style='color:#94A3B8; font-size:0.8rem;'>Guest Profile</span></div>", unsafe_allow_html=True)
-        
     # Render active views
     if not st.session_state.logged_in:
         render_landing_page()
@@ -1099,10 +1135,7 @@ def main():
         if st.session_state.user_role == "student":
             render_student_portal()
         else:
-            if st.session_state.active_tab == "Classrooms Admin":
-                render_teacher_dashboard()
-            elif st.session_state.active_tab == "Teacher Analytics":
-                render_teacher_dashboard()
+            render_teacher_dashboard()
 
 if __name__ == "__main__":
     main()

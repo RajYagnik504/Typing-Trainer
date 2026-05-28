@@ -152,7 +152,7 @@ const Games = () => {
 const sty = {
   container: {
     display: 'flex', flexDirection: 'column', gap: '1.5rem',
-    maxWidth: '960px', margin: '0 auto', width: '100%',
+    maxWidth: '100%', margin: '0 auto', width: '100%',
   },
   header: {
     display: 'flex', justifyContent: 'space-between',
